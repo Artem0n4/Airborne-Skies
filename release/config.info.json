@@ -1,0 +1,49 @@
+{
+  "properties": {
+    "enabled": {
+      "name": {
+        "en": "«Enable modification»",
+        "ru": "«Включить мод»"
+      }
+    },
+    "button_y": {
+      "name": {
+        "en": "«Button y coords»",
+        "ru": "«Координаты кнопки по оси y»"
+      },
+      "description": {
+        "en": "coordinates",
+        "ru": "координаты"
+      },
+      "type": "SeekBar",
+      "min": 0,
+      "max": 160
+    },
+    "button_x": {
+        "name": {
+          "en": "«Button x coords»",
+          "ru": "«Координаты кнопки по оси x»"
+        },
+        "description": {
+          "en": "Number of x coordinate",
+          "ru": "Число x координаты"
+        },
+        "type": "SeekBar",
+        "min": 0,
+        "max": 60
+      },
+      "button_size": {
+        "name": {
+          "en": "«Button size»",
+          "ru": "«Размер кнопок»"
+        },
+        "description": {
+          "en": "Standart size of buttons is 28",
+          "ru": "Стандартный размер кнопок 28"
+        },
+        "type": "SeekBar",
+        "min": 0,
+        "max": 28
+      }
+  }
+}
