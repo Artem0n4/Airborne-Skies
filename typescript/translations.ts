@@ -22,7 +22,9 @@ for(const i in ru_RU) {
  })
 }
 
+//
 // const DIRS = FileTools.GetListOfFiles(
 //     __dir__ + "resources/translations/",
 //     ""
 //   );
+
