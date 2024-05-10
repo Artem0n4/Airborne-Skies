@@ -12,11 +12,10 @@ class SkyItem {
     constructor(id: string, texture: animation_texture_descriptor);
     constructor(public id: string, public texture?: item_texture<string | animation_texture_descriptor>, stack?: int) {
       texture ??= id;
-      ItemRegistry.createItem(id, {
-          name: "item.airborne_skies." + id,
-          icon: typeof texture === 'string' ? texture : texture.texture,
-          stack: stack || 64
-      });
+      IDRegistry.genItemID(id)
+      Item.createItem(id, "item.airborne_skies." + id, {
+          name: typeof texture === 'string' ? texture : texture.texture, meta: 0},
+         { stack: stack || 64});
       texture instanceof Object && IAHelper.makeAdvancedAnim(ItemID[id], texture.texture, texture.time, range(texture.frame))
     };
 
@@ -72,4 +71,4 @@ class SkyItem {
 };
 
 new SkyItem("engineer_hammer", "engineer_hammer")
-Item.registerNameOverrideFunction(EMachineTool.HAMMER, (item, translation, name) => Native.Color.GOLD + Translation.translate(name) + Native.Color.GRAY + "\n" + Translation.translate("message.airborne_skies.hammer") )
+Item.registerNameOverrideFunction("engineer_hammer", (item, translation, name) => Native.Color.GOLD + Translation.translate(name) + Native.Color.GRAY + "\n" + Translation.translate("message.airborne_skies.hammer") )

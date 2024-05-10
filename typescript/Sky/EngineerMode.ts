@@ -12,6 +12,13 @@ namespace Engineer {
         type: "background",
         color: android.graphics.Color.argb(0.15, 162/256, 81/256, 0.9),
       },
+      {
+        type: "bitmap",
+        x: UI.getScreenHeight() / 2,
+        y: UI.getScreenHeight() / 4,
+        bitmap: "cross",
+        scale: 3
+      }
     ],
   });
   
@@ -71,13 +78,11 @@ bitmap.scale(0.5, 0.5);
  });
 
  Armor.registerOnTakeOnListener(ItemID["engineer_glasses"], (item, slot, player) => {
-    alert("Я родился!");
     Mode.switch(true, player);
     UIOpen = true;
  });
 
  Armor.registerOnTakeOffListener(ItemID["engineer_glasses"], (item, slot, player) => {
-    alert("Я снят!");
     Mode.switch(false, player);
     UIOpen = false;
  })
