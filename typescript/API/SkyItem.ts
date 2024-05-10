@@ -69,4 +69,7 @@ class SkyItem {
        model.setUiModel(mesh, "models/" + texture);
       };
 
-}
+};
+
+new SkyItem("engineer_hammer", "engineer_hammer")
+Item.registerNameOverrideFunction(EMachineTool.HAMMER, (item, translation, name) => Native.Color.GOLD + Translation.translate(name) + Native.Color.GRAY + "\n" + Translation.translate("message.airborne_skies.hammer") )

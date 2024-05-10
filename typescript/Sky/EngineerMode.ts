@@ -1,5 +1,5 @@
 namespace Engineer {
-  export const modes: Record<int, [boolean, UI.Container]> = {};
+  export const modes: Record<int, boolean> = {};
   export const UIMode = new UI.Window({
     location: {
       x: 0,
@@ -10,11 +10,15 @@ namespace Engineer {
     drawing: [
       {
         type: "background",
-        color: android.graphics.Color.argb(218, 142, 29, 0.35),
+        color: android.graphics.Color.argb(0.15, 162/256, 81/256, 0.9),
       },
     ],
   });
+  
+  export let UIOpen = false;
+ export const UIContainer = new UI.Container();
 
+ UIMode.setTouchable(false);
   export class Mode {
     public static validate(player: int) {
       const name = Entity.getNameTag(player);
@@ -33,18 +37,24 @@ namespace Engineer {
     };
 
     public static switch(value: boolean, player: int) {
+
       const name = Entity.getNameTag(player);
-      modes[name] = [value, new UI.Container()];
+      modes[name] = value
+      Game.message(JSON.stringify(modes))
     };
-    public static getContainer(player): UI.Container | null {
-        const name = Entity.getNameTag(player);
-       return modes[name][1] as UI.Container || null;
-    }
   }
 
   Callback.addCallback("ItemUse", function(coords, item, block, isExternal, player) {
     if(item.id === VanillaItemID.stick) {
         Mode.validate(player);
+        
+  const bitmap = new android.graphics.Canvas();
+  const paint = new android.graphics.Paint()
+  paint.setARGB(0.5,0,0,0);
+bitmap.drawBitmap(FileTools.ReadImage(__dir__ + "resources/assets/misc/cross.png"), bitmap.getHeight() / 2, bitmap.getWidth() / 2, paint)
+alert("Тест!");
+bitmap.scale(0.5, 0.5);
+
     }
   });
 
@@ -63,13 +73,22 @@ namespace Engineer {
  Armor.registerOnTakeOnListener(ItemID["engineer_glasses"], (item, slot, player) => {
     alert("Я родился!");
     Mode.switch(true, player);
-    Mode.getContainer(player) && Mode.getContainer(player).openAs(UIMode);
+    UIOpen = true;
  });
 
  Armor.registerOnTakeOffListener(ItemID["engineer_glasses"], (item, slot, player) => {
     alert("Я снят!");
     Mode.switch(false, player);
-    Mode.getContainer(player) && Mode.getContainer(player).close();
+    UIOpen = false;
  })
-   
+
+ Callback.addCallback("NativeGuiChanged", function (screenName) {
+    if (screenName == "in_game_play_screen" && UIOpen === true && UIContainer.isOpened() === false) {
+      UIContainer.openAs(UIMode);
+    } else {
+      UIContainer.close();
+    }
+  });
+
+
 }

@@ -15,5 +15,11 @@ namespace Engineer {
             };
            }
        }
-    }
+    };
+
+    BlockRegistry.createBlockWithRotation("steam_frame", [{
+       texture: [["steam_frame", 0]],
+       name: "block.airborne_skies.steam_frame",
+    }], "stone");
+    TileEntity.registerPrototype(BlockID["steam_frame"], new Frame())
 }

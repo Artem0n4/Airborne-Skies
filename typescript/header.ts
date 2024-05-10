@@ -1,3 +1,5 @@
+IMPORT("BlockEngine");
+IMPORT("ItemAnimHelper")
 type int = number;
 type universal<T extends string | int> = T
 type animation_texture_descriptor = {texture: string, frame: int, time?: int}
