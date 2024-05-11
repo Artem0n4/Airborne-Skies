@@ -25,15 +25,12 @@ namespace Engineer {
   export class Mode {
     public static validate(player: int) {
       const name = Entity.getNameTag(player);
-      Game.message("before: " + JSON.stringify(modes[name])); //DEBUG
       modes[name] ??= { [name]: false };
-      Game.message("after: " + JSON.stringify(modes[name])); //DEBUG
-      if (modes[name][0] === false) {
+      if (modes[name] === false) {
         Network.getClientForPlayer(player).sendMessage(
           Native.Color.GREEN +
             Translation.translate("message.airborne_skyes.engineer_mode_false")
         );
-        alert("Debug");
         return false;
       }
       return true;

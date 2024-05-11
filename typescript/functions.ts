@@ -21,7 +21,7 @@ const MathHelper = {
   },
 };
 
-const ObjectValues = function (obj: {}) {
+const ObjectValues = function<T> (obj: {}): T[] {
   return Object.keys(obj).map(function (v) {
     return obj[v];
   });

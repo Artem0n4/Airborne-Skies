@@ -12,13 +12,32 @@ namespace Engineer {
     "stone"
   );
 
+  
+  const content = { elements: {} };
+
+  for (let i = 0; i < 9; i++) {
+    content.elements["slot_" + i] = {
+      type: "slot",
+    };
+  }
+
+  export const FrameUI = new UI.StandardWindow(content);
+
+
+
   export interface IComponentDescriptor {
     result: int;
     inputs: int[];
   }
 
   export class Frame extends TileEntityBase {
-    public defaultValues = {};
+    public override useNetworkItemContainer: true;
+    public getScreenByName() {
+        return FrameUI
+    }
+    public defaultValues = {
+        slot: 0 //0 -> 8
+    };
     onInit(): void {
       this.data.component_list = this.data.component_list || [];
     }
@@ -36,7 +55,7 @@ namespace Engineer {
       coords: Callback.ItemUseCoordinates,
       item: ItemStack,
       player: int
-    ): boolean {
+    ): any {
       const component_id = ArrayHelper.flatAll(
         ObjectValues(SkyItem.components)
       );
@@ -45,11 +64,10 @@ namespace Engineer {
           "DEBUG: " + JSON.stringify(component_id)
         );
         if (Mode.validate(player)) {
-          Game.message("Working");
+
           if (component_id.indexOf(item.id) > -1) {
-            //...
-     alert("совпало!")
-            return true;
+        const container = this.container.getSlot(this.data.slot);
+        //...
           }
         }
       }
