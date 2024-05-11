@@ -13,8 +13,8 @@ class SkyBlock {
       return this;
     };
    public createWithRotation(): this {
-    IDRegistry.genBlockID(this.id);
-      Block.createBlockWithRotation(this.id, this.data, this.type);
+  IDRegistry.genBlockID(this.id),
+      Block.createBlockWithRotation(this.id, this.data, this.type)
       return this;
    };
     public info(text: string, translation?: {}): void {

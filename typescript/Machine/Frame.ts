@@ -6,6 +6,7 @@ namespace Engineer {
       {
         texture: [["steam_frame", 0]],
         name: "block.airborne_skies.steam_frame",
+        inCreative: true
       },
     ],
     "stone"

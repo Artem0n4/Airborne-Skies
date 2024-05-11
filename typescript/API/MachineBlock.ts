@@ -1,11 +1,16 @@
 class MachineBlock extends SkyBlock {
-  constructor(id: string, data: Block.BlockVariation[]) {
+  constructor(id, data) {
     super(id, data);
+    this.createWithRotation();
+    Block.setDestroyTime(this.id, -1), this.destroyIfCondition();
   }
   protected destroyIfCondition() {
     Block.registerClickFunction(this.id, (coords, item, block, player) => {
-      if (Entity.getSneaking(player) === true) {
-        alert("Debug")
+      const entity = new PlayerEntity(player);
+      if (
+        Entity.getSneaking(player) === true &&
+        entity.getCarriedItem().id === 0
+      ) {
         const region = BlockSource.getDefaultForActor(player);
         for (let i = 0; i < 8; i++) {
           const vel = Math.random() / i;
@@ -19,24 +24,11 @@ class MachineBlock extends SkyBlock {
             vel
           );
         }
-        const entity = new PlayerEntity(player);
-        entity.getCarriedItem().id === 0
-          ? entity.setCarriedItem({ id: block.id, count: 1, data: 0 })
-          : entity.addItemToInventory({
-              id: block.id,
-              count: 1,
-              data: 0,
-            });
-            region.destroyBlock(coords.x, coords.y, coords.z, false);
+        entity.setCarriedItem({ id: block.id, count: 1, data: 0 });
+        region.setBlock(coords.x, coords.y, coords.z, 0, 0);
         Entity.setSneaking(player, false);
       }
     });
-  }
-  public createWithRotation(): this {
-    super.createWithRotation();
-    Block.setDestroyTime(this.id, -1);
-    this.destroyIfCondition();
-    return this;
   }
 }
 
@@ -51,5 +43,6 @@ new MachineBlock("particle_collector", [
       ["particle_collector", 0],
       ["particle_collector", 0],
     ],
+    inCreative: true,
   },
-]).createWithRotation();
+]);

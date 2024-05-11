@@ -3,7 +3,7 @@ const ru_RU = {
     "message.airborne_skyes.engineer_mode_false": `Я слишком косолап, и могу случайно что-нибудь сломать!
      Возможно, очки инженера поправят ситуацию`,
     "message.airborne_skyes.engineer_glasses": "Увеличивают ваше мастерство!",
-    "message.airborne_skies.hammer": "Позволяют мастерить!",
+    "message.airborne_skies.hammer": "Позволяет мастерить!",
     "message.airborne_skies.unshift": "Используйте SHIFT для получения информации",
     "item.airborne_skies.engineer_hammer": "Инженерный молоток",
     "block.airborne_skies.steam_frame": "Корпус"

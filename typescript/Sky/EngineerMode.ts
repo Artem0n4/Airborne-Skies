@@ -1,12 +1,6 @@
 namespace Engineer {
   export const modes: Record<int, boolean> = {};
   export const UIMode = new UI.Window({
-    location: {
-      x: 0,
-      y: 0,
-      width: 1000,
-      height: 560,
-    },
     drawing: [
       {
         type: "background",
@@ -21,11 +15,13 @@ namespace Engineer {
       }
     ],
   });
-  
+  UIMode.setTouchable(false);
+  UIMode.setAsGameOverlay(false);
+
   export let UIOpen = false;
  export const UIContainer = new UI.Container();
 
- UIMode.setTouchable(false);
+
   export class Mode {
     public static validate(player: int) {
       const name = Entity.getNameTag(player);
