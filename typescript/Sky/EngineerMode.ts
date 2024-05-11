@@ -14,8 +14,8 @@ namespace Engineer {
       },
       {
         type: "bitmap",
-        x: UI.getScreenHeight() / 2,
-        y: UI.getScreenHeight() / 4,
+        x: (1000 / 2) / (16*3/2),
+        y: (UI.getScreenHeight() / 2) / (16*3/2),
         bitmap: "cross",
         scale: 3
       }
@@ -51,19 +51,6 @@ namespace Engineer {
     };
   }
 
-  Callback.addCallback("ItemUse", function(coords, item, block, isExternal, player) {
-    if(item.id === VanillaItemID.stick) {
-        Mode.validate(player);
-        
-  const bitmap = new android.graphics.Canvas();
-  const paint = new android.graphics.Paint()
-  paint.setARGB(0.5,0,0,0);
-bitmap.drawBitmap(FileTools.ReadImage(__dir__ + "resources/assets/misc/cross.png"), bitmap.getHeight() / 2, bitmap.getWidth() / 2, paint)
-alert("Тест!");
-bitmap.scale(0.5, 0.5);
-
-    }
-  });
 
   ItemRegistry.createArmor("engineer_glasses", {
       name: "armor.airborne_skyes.engineer_glasses",

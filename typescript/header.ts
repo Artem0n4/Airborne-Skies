@@ -10,4 +10,12 @@ const models_dir = __dir__ + "resources/assets/models/";
 
 enum EMachineTool {
     HAMMER = ItemID["engineer_hammer"],
-}
+};
+
+enum EDestroyLevel {
+    HAND = 0,
+    WOOD = 1,
+    STONE = 2,
+    IRON = 3,
+    DIAMOND = 4
+  }

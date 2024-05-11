@@ -3,5 +3,6 @@ header.ts
 functions.ts
 API/SkyItem.ts
 API/SkyBlock.ts
+API/MachineBlock.ts
 Sky/EngineerMode.ts
 Machine/Frame.ts
