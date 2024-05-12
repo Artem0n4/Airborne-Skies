@@ -1,6 +1,6 @@
 namespace Engineer {
-  IDRegistry.genBlockID("steam_frame");
-  Block.createBlockWithRotation(
+
+  new SkyBlock(
     "steam_frame",
     [
       {
@@ -8,9 +8,8 @@ namespace Engineer {
         name: "block.airborne_skies.steam_frame",
         inCreative: true
       },
-    ],
-    "stone"
-  );
+    ]
+  ).create();
 
   
   const content = { elements: {} };
@@ -60,11 +59,7 @@ namespace Engineer {
         ObjectValues(SkyItem.components)
       );
       if (item.id === EMachineTool.HAMMER) {
-        Game.message(
-          "DEBUG: " + JSON.stringify(component_id)
-        );
         if (Mode.validate(player)) {
-
           if (component_id.indexOf(item.id) > -1) {
         const container = this.container.getSlot(this.data.slot);
         //...

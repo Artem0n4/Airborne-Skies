@@ -18,4 +18,23 @@ enum EDestroyLevel {
     STONE = 2,
     IRON = 3,
     DIAMOND = 4
-  }
+};
+
+const cross = Particles.registerParticleType({
+    texture: "cross",
+    render: 2,
+    size: [0.9, 1.2],
+    lifetime: [40, 60],
+    animators: {
+        alpha: {
+            fadeIn: .1, fadeOut: .2
+        },
+        size: {
+            fadeOut: 0, fadeIn: 0, start: 0.2, end: 0
+        }
+    }
+});
+
+enum ESkiesParticle {
+    CROSS = cross as int
+}

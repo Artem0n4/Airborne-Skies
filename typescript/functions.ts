@@ -13,8 +13,7 @@ const range = function(int: int): int[] {
 
 const MathHelper = {
   randomValue: function<T>(...values: T[]): T {
-    const random = values[Math.floor(Math.random() * values.length)];
-    return random;
+    return values[Math.floor(Math.random() * values.length)];
   },
   radian(gradus: int): int {
     return (gradus * Math.PI) / 180;

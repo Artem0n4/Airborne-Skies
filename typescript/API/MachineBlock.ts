@@ -1,27 +1,41 @@
 class MachineBlock extends SkyBlock {
-    public static machine_list = []
+  public static machine_list = [];
   constructor(id, data) {
     super(id, data);
     this.createWithRotation();
-    Block.setDestroyTime(this.id, -1), 
-    this.destroyIfCondition();
-    MachineBlock.machine_list.push(BlockID[this.id])
-  }; 
- public static particles (coords: Callback.ItemUseCoordinates) {
+    Block.setDestroyTime(this.id, -1), this.destroyIfCondition();
+    MachineBlock.machine_list.push(BlockID[this.id]);
+  }
+  public static getParticles(coords: Callback.ItemUseCoordinates) {
+    const particle_list = MathHelper.randomValue(
+      EParticleType.CLOUD,
+      EParticleType.SMOKE
+    );
     for (let i = 0; i < 8; i++) {
-        const vel = Math.random() / i;
-        Particles.addParticle(
-          EParticleType.CRIT,
-          coords.x + Math.random(),
-          coords.y + Math.random(),
-          coords.z + Math.random(),
-          vel,
-          vel,
-          vel
-        );
-      }
- }
-
+      const velocity = Math.random() / i;
+      Particles.addParticle(
+        particle_list,
+        coords.x + Math.random(),
+        coords.y + Math.random(),
+        coords.z + Math.random(),
+        velocity,
+        velocity,
+        velocity
+      );
+    }
+  }
+  public static crossParticles(coords: Callback.ItemUseCoordinates) {
+    Math.random() < 0.05 &&
+      Particles.addParticle(
+        ESkiesParticle.CROSS,
+        coords.x + Math.random(),
+        coords.y + Math.random(),
+        coords.z + Math.random(),
+        0,
+        0.01,
+        0
+      );
+  }
   protected destroyIfCondition() {
     Block.registerClickFunction(this.id, (coords, item, block, player) => {
       const entity = new PlayerEntity(player);
@@ -33,10 +47,20 @@ class MachineBlock extends SkyBlock {
         entity.setCarriedItem({ id: block.id, count: 1, data: 0 });
         region.setBlock(coords.x, coords.y, coords.z, 0, 0);
         Entity.setSneaking(player, false);
-        return MachineBlock.particles(coords)
+        return MachineBlock.getParticles(coords);
       }
     });
-  }
+  };
+
+  static {
+    
+    Callback.addCallback("DestroyBlockContinue", (coords, block, player) => {
+      if (MachineBlock.machine_list.includes(block.id))
+        return MachineBlock.crossParticles(coords);
+    });
+ 
+  };
+
 }
 
 new MachineBlock("particle_collector", [
@@ -53,8 +77,3 @@ new MachineBlock("particle_collector", [
     inCreative: true,
   },
 ]);
-
-Callback.addCallback("BuildBlock", (coords,block,player) => {
-    Game.message(JSON.stringify(MachineBlock.machine_list) + "\n" + block.id + "\n" + MachineBlock.machine_list.includes(block.id))
-    if(MachineBlock.machine_list.indexOf(block.id) > -1) return MachineBlock.particles(coords);
-})
