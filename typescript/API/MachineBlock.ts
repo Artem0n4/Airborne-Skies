@@ -6,10 +6,10 @@ class MachineBlock extends SkyBlock {
     Block.setDestroyTime(this.id, -1), this.destroyIfCondition();
     MachineBlock.machine_list.push(BlockID[this.id]);
   }
-  public static getParticles(coords: Callback.ItemUseCoordinates) {
+  public static takeParticles(coords: Callback.ItemUseCoordinates) {
     const particle_list = MathHelper.randomValue(
-      EParticleType.CLOUD,
-      EParticleType.SMOKE
+      EParticleType.REDSTONE,
+      EParticleType.CRIT
     );
     for (let i = 0; i < 8; i++) {
       const velocity = Math.random() / i;
@@ -24,17 +24,24 @@ class MachineBlock extends SkyBlock {
       );
     }
   }
-  public static crossParticles(coords: Callback.ItemUseCoordinates) {
-    Math.random() < 0.05 &&
-      Particles.addParticle(
+  public static crossParticles(
+    coords: Callback.ItemUseCoordinates,
+    player: int
+  ) {
+    const entity = new PlayerEntity(player);
+    if (MathHelper.randomInt(0, 100) <= 1) {
+      return Particles.addParticle(
         ESkiesParticle.CROSS,
-        coords.x + Math.random(),
-        coords.y + Math.random(),
-        coords.z + Math.random(),
+        Math.random() / 10,
+        coords.y + 0.9,
+        Math.random() / 10,
         0,
         0.01,
         0
-      );
+      ),
+      entity.setSelectedSlot(MathHelper.randomInt(0, 8));
+    };
+    return;
   }
   protected destroyIfCondition() {
     Block.registerClickFunction(this.id, (coords, item, block, player) => {
@@ -46,21 +53,15 @@ class MachineBlock extends SkyBlock {
         const region = BlockSource.getDefaultForActor(player);
         entity.setCarriedItem({ id: block.id, count: 1, data: 0 });
         region.setBlock(coords.x, coords.y, coords.z, 0, 0);
-        Entity.setSneaking(player, false);
-        return MachineBlock.getParticles(coords);
-      }
-    });
-  };
-
+    }
+  });
+  }
   static {
-    
     Callback.addCallback("DestroyBlockContinue", (coords, block, player) => {
       if (MachineBlock.machine_list.includes(block.id))
-        return MachineBlock.crossParticles(coords);
+        return MachineBlock.crossParticles(coords, player);
     });
- 
-  };
-
+  }
 }
 
 new MachineBlock("particle_collector", [

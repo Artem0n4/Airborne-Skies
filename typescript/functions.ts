@@ -15,9 +15,12 @@ const MathHelper = {
   randomValue: function<T>(...values: T[]): T {
     return values[Math.floor(Math.random() * values.length)];
   },
-  radian(gradus: int): int {
+  radian: function(gradus: int): int {
     return (gradus * Math.PI) / 180;
   },
+  randomInt: function(min: int, max: int): int {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
 };
 
 const ObjectValues = function<T> (obj: {}): T[] {
@@ -31,3 +34,4 @@ const ArrayHelper = {
   return array.reduce((previousValue, currentValue) => previousValue.concat(currentValue), []) 
   }
 }
+

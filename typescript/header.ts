@@ -23,7 +23,7 @@ enum EDestroyLevel {
 const cross = Particles.registerParticleType({
     texture: "cross",
     render: 2,
-    size: [0.9, 1.2],
+    size: [1.7, 2],
     lifetime: [40, 60],
     animators: {
         alpha: {
