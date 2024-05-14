@@ -81,3 +81,18 @@ class SkyItem {
 new SkyItem("brass_ingot", "brass_ingot").setupComponentType("brass");
 new SkyItem("copper_ingot", "copper_ingot_as").setupComponentType("copper");
 new SkyItem("zinc_ingot", "zinc_ingot");
+
+Translation.addTranslation("item.airborne_skies.brass_ingot", {
+  ru: Native.Color.GOLD + "Латунный слиток",
+  en: Native.Color.GOLD + "Brass ingot"
+});
+
+Translation.addTranslation("item.airborne_skies.copper_ingot", {
+  ru: Native.Color.GOLD + "Медный слиток",
+  en:Native.Color.GOLD + "Copper ingot",
+});
+
+Translation.addTranslation("item.airborne_skies.zinc_ingot", {
+  ru: Native.Color.AQUA + "Цинк",
+  en:Native.Color.AQUA + "Zinc",
+});

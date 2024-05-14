@@ -11,8 +11,7 @@ namespace Engineer {
       const name = Entity.getNameTag(player);
       modes[name] ??= { [name]: false };
       if (modes[name] === false) {
-          BlockEngine.sendUnlocalizedMessage(
-            Network.getClientForPlayer(player),
+          Game.message(
             Native.Color.GREEN +
               Translation.translate(
                 "message.airborne_skyes.engineer_mode_false"

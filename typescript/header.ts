@@ -37,4 +37,11 @@ const cross = Particles.registerParticleType({
 
 enum ESkiesParticle {
     CROSS = cross as int
-}
+};
+
+const BLOCK_TYPE_ALPHAMODE = Block.createSpecialType({
+    explosionres: 0.5,
+    lightopacity: 1,
+    destroytime: .4,
+    renderlayer: 1,
+});

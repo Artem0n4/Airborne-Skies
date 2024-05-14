@@ -20,7 +20,7 @@ namespace Engineer {
   });
 
   UIMode.setTouchable(false);
-  UIMode.setAsGameOverlay(false);
+  UIMode.setAsGameOverlay(true);
 
   ItemRegistry.createArmor("engineer_glasses", {
     name: "armor.airborne_skyes.engineer_glasses",

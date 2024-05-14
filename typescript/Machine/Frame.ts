@@ -5,7 +5,7 @@ namespace Engineer {
       name: "block.airborne_skies.steam_frame",
       inCreative: true,
     },
-  ]).create();
+  ], BLOCK_TYPE_ALPHAMODE).create();
 
   const content = { elements: {} };
 
@@ -51,36 +51,38 @@ namespace Engineer {
       const component_id = ArrayHelper.flatAll(
         ObjectValues(SkyItem.components)
       );
+      Game.message(String(component_id));
       const valid = Mode.validate(player);
       if (item.id === EMachineTool.HAMMER) {
         if (!!valid) {
-          if (component_id.includes(item.id)) {
-            let slot: ItemInstance;
-            let index: int;
-            for (let i = 0; i < 9; i++) {
-              slot = this.container.getSlot("slot_" + i);
-              index = i;
-              Game.message("slot id:" + slot.id + " | num: " + i);
-              if (slot.count === 0) break;
-            }
-            slot &&
-              index &&
-              this.container.setSlot(
-                "slot_" + index,
-                slot.id,
-                slot.count,
-                slot.data,
-                slot.extra
-              );
-
-            return;
-          }
+        
         }
       }
       if (component_id.indexOf(item.id) > -1) {
         this.data.component_list.push({
           [IDRegistry.getNameByID(item.id)]: false,
         });
+
+        let slot: ItemInstance;
+        let index: int;
+        for (let i = 0; i < 9; i++) {
+          slot = this.container.getSlot("slot_" + i);
+          index = i;
+          Game.message("slot id:" + slot.id + " | num: " + i);
+          if (slot.count === 0) break;
+        }
+        slot &&
+          index &&
+          this.container.setSlot(
+            "slot_" + index,
+            slot.id,
+            slot.count,
+            slot.data,
+            slot.extra
+          );
+
+        return;
+
         Game.message(JSON.stringify(this.data.component_list));
       }
     }

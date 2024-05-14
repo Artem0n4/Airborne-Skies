@@ -25,12 +25,9 @@ class MachineBlock extends SkyBlock {
     }
   }
   public static crossParticles(
-    coords: Callback.ItemUseCoordinates,
-    player: int
+    coords: Callback.ItemUseCoordinates
   ) {
-    const entity = new PlayerEntity(player);
-    if (MathHelper.randomInt(0, 100) <= 1) {
-      return Particles.addParticle(
+        Particles.addParticle(
         ESkiesParticle.CROSS,
         Math.random() / 10,
         coords.y + 0.9,
@@ -38,10 +35,7 @@ class MachineBlock extends SkyBlock {
         0,
         0.01,
         0
-      ),
-      entity.setSelectedSlot(MathHelper.randomInt(0, 8));
-    };
-    return;
+      );
   }
   protected destroyIfCondition() {
     Block.registerClickFunction(this.id, (coords, item, block, player) => {
@@ -53,13 +47,14 @@ class MachineBlock extends SkyBlock {
         const region = BlockSource.getDefaultForActor(player);
         entity.setCarriedItem({ id: block.id, count: 1, data: 0 });
         region.setBlock(coords.x, coords.y, coords.z, 0, 0);
+        MachineBlock.takeParticles(coords);
     }
   });
   }
   static {
     Callback.addCallback("DestroyBlockContinue", (coords, block, player) => {
-      if (MachineBlock.machine_list.includes(block.id))
-        return MachineBlock.crossParticles(coords, player);
+      if (MachineBlock.machine_list.includes(block.id) && Math.random() < 0.5)
+        return MachineBlock.crossParticles(coords)
     });
   }
 }
