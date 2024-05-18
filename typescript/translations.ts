@@ -6,6 +6,7 @@ const ru_RU = {
     "message.airborne_skies.hammer": "Позволяет мастерить!",
     "message.airborne_skies.unshift": "Используйте SHIFT для получения информации",
     "item.airborne_skies.engineer_hammer": "Инженерный молоток",
+    "item.airborne_skies.metal_shears": "Ножницы по металлу",
     "block.airborne_skies.steam_frame": "Корпус"
 }
 
@@ -16,6 +17,7 @@ const en_US = {
     "message.airborne_skies.hammer": "Can to create!",
     "message.airborne_skies.unshift": "Try use shift for get info",
     "item.airborne_skies.engineer_hammer": "Engineer Hammer",
+    "item.airborne_skies.metal_shears": "Metal shears",
     "block.airborne_skies.steam_frame": "Frame"
 }
 

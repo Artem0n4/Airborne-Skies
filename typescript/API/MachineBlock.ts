@@ -29,9 +29,9 @@ class MachineBlock extends SkyBlock {
   ) {
         Particles.addParticle(
         ESkiesParticle.CROSS,
-        Math.random() / 10,
+        coords.x + Math.random() / 10,
         coords.y + 0.9,
-        Math.random() / 10,
+        coords.z + Math.random() / 10,
         0,
         0.01,
         0
@@ -40,12 +40,13 @@ class MachineBlock extends SkyBlock {
   protected destroyIfCondition() {
     Block.registerClickFunction(this.id, (coords, item, block, player) => {
       const entity = new PlayerEntity(player);
+      const carried_item = entity.getCarriedItem()
       if (
         Entity.getSneaking(player) === true &&
-        entity.getCarriedItem().id === 0
+        carried_item.id === 0 || (carried_item.id === block.id && carried_item.count < 64)
       ) {
         const region = BlockSource.getDefaultForActor(player);
-        entity.setCarriedItem({ id: block.id, count: 1, data: 0 });
+        entity.setCarriedItem({ id: block.id, count: 1, data: 0});
         region.setBlock(coords.x, coords.y, coords.z, 0, 0);
         MachineBlock.takeParticles(coords);
     }
@@ -53,7 +54,7 @@ class MachineBlock extends SkyBlock {
   }
   static {
     Callback.addCallback("DestroyBlockContinue", (coords, block, player) => {
-      if (MachineBlock.machine_list.includes(block.id) && Math.random() < 0.5)
+      if (MachineBlock.machine_list.includes(block.id) && MathHelper.randomInt(0, 100) < 5)
         return MachineBlock.crossParticles(coords)
     });
   }

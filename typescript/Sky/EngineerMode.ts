@@ -1,25 +1,35 @@
 namespace Engineer {
-
   export const modes: Record<int, boolean> = {};
 
   export abstract class Mode {
+
     public static readonly HAMMER: SkyItem = new SkyItem(
       "engineer_hammer",
-      "engineer_hammer"
+      "engineer_hammer",
+      1
     );
-    public static validate(player: int) {
+
+    public static readonly METAL_SHEARS: SkyItem = new SkyItem(
+      "metal_shears",
+      "metal_shears",
+      1
+    );
+
+    private static readonly sendOffModeText = (player) =>
+      BlockEngine.sendUnlocalizedMessage(
+        Network.getClientForPlayer(player),
+        Native.Color.GREEN +
+          Translation.translate("message.airborne_skyes.engineer_mode_false")
+      );
+
+    public static validate(player: int, callback: (player?: int) => void) {
       const name = Entity.getNameTag(player);
       modes[name] ??= { [name]: false };
-      if (modes[name] === false) {
-          Game.message(
-            Native.Color.GREEN +
-              Translation.translate(
-                "message.airborne_skyes.engineer_mode_false"
-              ))
-              return false
+      if (modes[name] !== true) {
+        return Mode.sendOffModeText(player);
       }
-      return true;
-    };
+      return callback();
+    }
     public static switch(value: boolean, player: int) {
       const name = Entity.getNameTag(player);
       modes[name] = value;
@@ -27,15 +37,7 @@ namespace Engineer {
     }
 
     static {
-      Item.registerNameOverrideFunction(
-        "engineer_hammer",
-        (item, translation, name) =>
-          `${Native.Color.GOLD + Translation.translate(name)}${
-            Native.Color.GRAY +
-            "\n" +
-            Translation.translate("message.airborne_skies.hammer")
-          }`
-      );
+      Mode.HAMMER.setupDescription("message.airborne_skies.hammer", Native.Color.GRAY);
     }
-  }
+  };
 }

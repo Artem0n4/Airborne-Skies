@@ -11,11 +11,12 @@ namespace Engineer {
       },
       {
         type: "bitmap",
-        x: (1000 / 2) / (16*3/2),
-        y: (UI.getScreenHeight() / 2) / (16*3/2),
+        x: (1000 / 2) + (16*3/2),
+        y: (UI.getScreenHeight() / 2) + (16*3/2),
         bitmap: "cross",
         scale: 3
-      }
+      },
+      {"type": "text", "text": "???", "x": 500, "y": UI.getScreenHeight() / 2 * 0.5, "font": {"size": 30, "color": 7}}
     ],
   });
 
