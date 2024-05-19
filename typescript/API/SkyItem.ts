@@ -131,3 +131,8 @@ Translation.addTranslation("item.airborne_skies.zinc_ingot", {
   ru: Native.Color.AQUA + "Цинк",
   en: Native.Color.AQUA + "Zinc",
 });
+
+//whatever
+Item.registerUseFunction(VanillaItemID.water_bucket, (coords, item, block, player) => {
+  if(block.id === VanillaBlockID.water) BlockSource.getDefaultForActor(player).setBlock(coords.x, coords.y, coords.z, 0, 0)
+})

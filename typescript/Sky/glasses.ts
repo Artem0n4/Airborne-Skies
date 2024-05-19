@@ -7,7 +7,7 @@ namespace Engineer {
     drawing: [
       {
         type: "background",
-        color: android.graphics.Color.argb(0.08, 162/256, 81/256, 0.9),
+        color: android.graphics.Color.argb(0.1, 162/256, 81/256, 0.9),
       },
       // {
       //   type: "bitmap",
@@ -45,7 +45,6 @@ Armor.registerOnTakeOffListener(ItemID["engineer_glasses"], (item, slot, player)
   Mode.switch(false, player);
   Entity.clearEffect(player, EPotionEffect.NIGHT_VISION)
   UIOpen = false;
-  EPotionEffect.HASTE
 })
 
 Callback.addCallback("NativeGuiChanged", function (screenName) {
