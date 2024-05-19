@@ -7,15 +7,15 @@ class SkyItem {
     zinc: [],
   };
 
-  constructor(id: string, texture: string);
-  constructor(id: string, texture: animation_texture_descriptor);
+  constructor(id: string, texture?: string);
+  constructor(id: string, texture?: animation_texture_descriptor);
   constructor(
     id: string,
     texture: item_texture<string | animation_texture_descriptor>,
     stack?: int
   );
   constructor(
-    public readonly id: string,
+    protected readonly id: string,
     protected readonly texture?: item_texture<
       string | animation_texture_descriptor
     >,
@@ -42,7 +42,7 @@ class SkyItem {
   }
   public setupComponentType(component: component) {
     SkyItem.components[component].push(ItemID[this.id]);
-    return this.setupDescription("type: " + component);
+    return this.setupDescription(Translation.translate("type: ") + Translation.translate(component));
   }
   protected model(model: string, import_params: RenderMesh.ImportParams) {
     const mesh = new RenderMesh();
@@ -109,13 +109,9 @@ class SkyItem {
   }
 }
 
-new SkyItem("brass_ingot", "brass_ingot").setupComponentType("brass");
+new SkyItem("brass_ingot").setupComponentType("brass");
 new SkyItem("copper_ingot", "copper_ingot_as").setupComponentType("copper");
-new SkyItem("zinc_ingot", "zinc_ingot").onUse((c, i, b, p) =>
-  Engineer.Mode.validate(p, () => {
-    Game.message("Work engineer mode");
-  })
-); //It is work, so good
+new SkyItem("zinc_ingot");
 
 Translation.addTranslation("item.airborne_skies.brass_ingot", {
   ru: Native.Color.GOLD + "Латунный слиток",
@@ -131,8 +127,3 @@ Translation.addTranslation("item.airborne_skies.zinc_ingot", {
   ru: Native.Color.AQUA + "Цинк",
   en: Native.Color.AQUA + "Zinc",
 });
-
-//whatever
-Item.registerUseFunction(VanillaItemID.water_bucket, (coords, item, block, player) => {
-  if(block.id === VanillaBlockID.water) BlockSource.getDefaultForActor(player).setBlock(coords.x, coords.y, coords.z, 0, 0)
-})

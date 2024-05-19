@@ -1,5 +1,9 @@
 namespace Engineer {
-  export const modes: Record<int, boolean> = {};
+  /**
+   * list of players with his modes   
+   * {int: boolean}
+   */
+  export const modes: Record<string, boolean> = {};
 
   export abstract class Mode {
     public static readonly HAMMER: SkyItem = new SkyItem(
@@ -18,12 +22,12 @@ namespace Engineer {
       BlockEngine.sendUnlocalizedMessage(
         Network.getClientForPlayer(player),
         Native.Color.RED +
-          Translation.translate("message.airborne_skyes.engineer_mode_false")
+          Translation.translate("message.airborne_skies.engineer_mode_false")
       );
 
     public static validate(player: int, callback: (player?: int) => void) {
       const name = Entity.getNameTag(player);
-      modes[name] ??= { [name]: false };
+      modes[name] ??= false;
       if (modes[name] !== true) {
         return Mode.sendOffModeText(player);
       }
@@ -44,6 +48,8 @@ namespace Engineer {
   abstract class Hammer {
     protected constructor() {}
     private static list: { before: int; after: int }[] = [];
+    public static registerUpdateBlock(before: int): void;
+    public static registerUpdateBlock(before: int, after: int): void
     public static registerUpdateBlock(before: int, after: int = 0) {
       this.list.push({ before, after });
     }
@@ -74,7 +80,6 @@ namespace Engineer {
       );
     }
   }
-
   //stone
   Hammer.registerUpdateBlock(VanillaBlockID.stone, VanillaBlockID.cobblestone);
   Hammer.registerUpdateBlock(VanillaBlockID.cobblestone, VanillaBlockID.gravel);

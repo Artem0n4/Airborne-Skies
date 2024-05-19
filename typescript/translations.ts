@@ -1,22 +1,36 @@
 const ru_RU = {
-    "armor.airborne_skyes.engineer_glasses": "Очки инженера",
-    "message.airborne_skyes.engineer_mode_false": `Кажется, у меня не получится. Мне нужны специальные очки`,
-    "message.airborne_skyes.engineer_glasses": "Увеличивают ваше мастерство!",
+    "message.airborne_skies.debug.full_information": "Полная информация: ",
+    "message.airborne_skies.debug.mode_list": "Список игроков с режимом инженера и их значения: ",
+    "message.airborne_skies.debug.engineer_mode": "Булевое значение вашего режима инженера: ",
+    "armor.airborne_skies.engineer_glasses": "Очки инженера",
+    "message.airborne_skies.engineer_mode_false": `Кажется, у меня не получится. Мне нужны специальные очки`,
+    "message.airborne_skies.engineer_glasses": "Увеличивают ваше мастерство!",
     "message.airborne_skies.hammer": "Позволяет мастерить!",
     "message.airborne_skies.unshift": "Используйте SHIFT для получения информации",
     "item.airborne_skies.engineer_hammer": "Инженерный молоток",
+    "item.airborne_skies.debug_engineer_tool": "Предмет для отладки",
     "item.airborne_skies.metal_shears": "Ножницы по металлу",
-    "block.airborne_skies.steam_frame": "Корпус"
+    "block.airborne_skies.steam_frame": "Корпус",
+    "type: ": "тип: ",
+    "brass": "латунь",
+    "zinc": "цинк",
+    "copper": "медь",
+    "gold": "золото",
+    "iron": "железо"
 }
 
 const en_US = {
-    "armor.airborne_skyes.engineer_glasses": "Engineer glasses",
-    "message.airborne_skyes.engineer_mode_false": "Switch on engineer mode!",
-    "message.airborne_skyes.engineer_glasses": "Increases your mastery!",
+    "message.airborne_skies.debug.full_information": "Full information: ",
+    "message.airborne_skies.debug.mode_list": "Player engineer modes list: ",
+    "message.airborne_skies.debug.engineer_mode": "Your engineer mode value: ",
+    "armor.airborne_skies.engineer_glasses": "Engineer glasses",
+    "message.airborne_skies.engineer_mode_false": "Switch on engineer mode!",
+    "message.airborne_skies.engineer_glasses": "Increases your mastery!",
     "message.airborne_skies.hammer": "Can to create!",
     "message.airborne_skies.unshift": "Try use shift for get info",
     "item.airborne_skies.engineer_hammer": "Engineer Hammer",
     "item.airborne_skies.metal_shears": "Metal shears",
+    "item.airborne_skies.debug_engineer_tool": "Item for debugging",
     "block.airborne_skies.steam_frame": "Frame"
 }
 

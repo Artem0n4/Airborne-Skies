@@ -24,7 +24,7 @@ namespace Engineer {
   UIMode.setAsGameOverlay(true);
 
   ItemRegistry.createArmor("engineer_glasses", {
-    name: "armor.airborne_skyes.engineer_glasses",
+    name: "armor.airborne_skies.engineer_glasses",
     icon: "engineer_glasses",
     type: "helmet",
     defence: 0,
@@ -32,7 +32,7 @@ namespace Engineer {
 });
 
 Item.registerNameOverrideFunction("engineer_glasses", (item, translation, name) => {
-  return Native.Color.GOLD + Translation.translate(name) + Native.Color.GRAY + "\n" + Translation.translate("message.airborne_skyes.engineer_glasses")
+  return Native.Color.GOLD + Translation.translate(name) + Native.Color.GRAY + "\n" + Translation.translate("message.airborne_skies.engineer_glasses")
 });
 
 Armor.registerOnTakeOnListener(ItemID["engineer_glasses"], (item, slot, player) => {
