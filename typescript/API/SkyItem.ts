@@ -12,14 +12,16 @@ class SkyItem {
   constructor(
     id: string,
     texture: item_texture<string | animation_texture_descriptor>,
-    stack?: int
+    stack?: int,
+    isTech?: boolean
   );
   constructor(
     protected readonly id: string,
     protected readonly texture?: item_texture<
       string | animation_texture_descriptor
     >,
-    stack?: int
+    stack?: int,
+    isTech?: boolean
   ) {
     texture ??= id;
     IDRegistry.genItemID(id);
@@ -30,7 +32,7 @@ class SkyItem {
         name: typeof texture === "string" ? texture : texture.texture,
         meta: 0,
       },
-      { stack: stack || 64 }
+      { stack: stack || 64, isTech: isTech || false}
     );
     texture instanceof Object &&
       IAHelper.makeAdvancedAnim(

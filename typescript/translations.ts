@@ -1,4 +1,5 @@
 const ru_RU = {
+    "durability: ": "прочность: ",
     "message.airborne_skies.debug.full_information": "Полная информация: ",
     "message.airborne_skies.debug.mode_list": "Список игроков с режимом инженера и их значения: ",
     "message.airborne_skies.debug.engineer_mode": "Булевое значение вашего режима инженера: ",

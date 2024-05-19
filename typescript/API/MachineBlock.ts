@@ -25,7 +25,7 @@ class MachineBlock extends SkyBlock {
     }
   }
   public static crossParticles(
-    coords: Callback.ItemUseCoordinates
+    coords: Callback.ItemUseCoordinates | Vector
   ) {
         Particles.addParticle(
         ESkiesParticle.CROSS,

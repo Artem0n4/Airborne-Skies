@@ -9,7 +9,8 @@ namespace Engineer {
     public static readonly HAMMER: SkyItem = new SkyItem(
       "engineer_hammer",
       "engineer_hammer",
-      1
+      1,
+      true
     );
 
     public static readonly METAL_SHEARS: SkyItem = new SkyItem(
@@ -18,7 +19,7 @@ namespace Engineer {
       1
     );
 
-    private static readonly sendOffModeText = (player) =>
+    private static readonly sendOffModeText = (player: int) =>
       BlockEngine.sendUnlocalizedMessage(
         Network.getClientForPlayer(player),
         Native.Color.RED +
@@ -38,10 +39,11 @@ namespace Engineer {
       modes[name] = value;
     }
     static {
-      Mode.HAMMER.setupDescription(
-        "message.airborne_skies.hammer",
-        Native.Color.GRAY
-      );
+      Item.addToCreative(Mode.HAMMER.getID(), 1, 250);
+      Item.registerNameOverrideFunction(Mode.HAMMER.getID(), (item, translation, name) => {
+        const durability_color = item.data >= 125 ? Native.Color.GREEN : item.data >= 50 ? Native.Color.RED : Native.Color.DARK_RED  
+        return Translation.translate(name) + "\n" + Native.Color.GRAY + Translation.translate("message.airborne_skies.hammer") + "\n" + Translation.translate("durability: ") + durability_color + item.data 
+      })
     }
   }
 
@@ -52,16 +54,25 @@ namespace Engineer {
     public static registerUpdateBlock(before: int, after: int): void
     public static registerUpdateBlock(before: int, after: int = 0) {
       this.list.push({ before, after });
-    }
+    };
+    private static destroyHammer(item: ItemInstance, player: int) {
+      const entity = new PlayerEntity(player);
+      const pos = Entity.getPosition(player);
+      MachineBlock.crossParticles({x: pos.x, y: pos.y + 1, z: pos.z});
+      entity.decreaseCarriedItem();
+      return;
+    };
     private static update(
       coords: Callback.ItemUseCoordinates,
       item: ItemInstance,
       block: Tile,
       player: int
     ) {
+      if(item.data <= 0) return this.destroyHammer(item, player);
       for (const list of Hammer.list) {
         if (block.id === list.before) {
           const region = BlockSource.getDefaultForActor(player);
+          Entity.setCarriedItem(player, item.id, item.count, item.data - 1, item.extra);
           region.destroyBlock(coords.x, coords.y, coords.z, false);
           region.setBlock(coords.x, coords.y, coords.z, list.after, 0);
           return;
