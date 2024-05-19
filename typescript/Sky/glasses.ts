@@ -7,16 +7,16 @@ namespace Engineer {
     drawing: [
       {
         type: "background",
-        color: android.graphics.Color.argb(0.15, 162/256, 81/256, 0.9),
+        color: android.graphics.Color.argb(0.08, 162/256, 81/256, 0.9),
       },
-      {
-        type: "bitmap",
-        x: (1000 / 2) + (16*3/2),
-        y: (UI.getScreenHeight() / 2) + (16*3/2),
-        bitmap: "cross",
-        scale: 3
-      },
-      {"type": "text", "text": "???", "x": 500, "y": UI.getScreenHeight() / 2 * 0.5, "font": {"size": 30, "color": 7}}
+      // {
+      //   type: "bitmap",
+      //   x: (1000 / 2) + (16*3/2),
+      //   y: (UI.getScreenHeight() / 2) + (16*3/2),
+      //   bitmap: "cross",
+      //   scale: 3
+      // },
+      // {"type": "text", "text": "???", "x": 500, "y": UI.getScreenHeight() / 2 * 0.5, "font": {"size": 30, "color": 7}}
     ],
   });
 
@@ -37,12 +37,15 @@ Item.registerNameOverrideFunction("engineer_glasses", (item, translation, name) 
 
 Armor.registerOnTakeOnListener(ItemID["engineer_glasses"], (item, slot, player) => {
   Mode.switch(true, player);
+  Entity.addEffect(player, EPotionEffect.NIGHT_VISION, 5, 2147483647, false, false);
   UIOpen = true;
 });
 
 Armor.registerOnTakeOffListener(ItemID["engineer_glasses"], (item, slot, player) => {
   Mode.switch(false, player);
+  Entity.clearEffect(player, EPotionEffect.NIGHT_VISION)
   UIOpen = false;
+  EPotionEffect.HASTE
 })
 
 Callback.addCallback("NativeGuiChanged", function (screenName) {
@@ -52,5 +55,4 @@ Callback.addCallback("NativeGuiChanged", function (screenName) {
     UIContainer.close();
   }
 });
-
 }

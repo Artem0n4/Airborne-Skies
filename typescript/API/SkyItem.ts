@@ -97,12 +97,15 @@ class SkyItem {
     };
     Item.registerNameOverrideFunction(this.id, (item, translation, name) => {
       return (
-        Translation.translate(_colors.name + name) +
+        _colors.name + Translation.translate(name) +
         "\n" +
         _colors.description +
         Translation.translate(description)
       );
     });
+  };
+  public getID() {
+    return ItemID[this.id]
   }
 }
 
@@ -110,7 +113,7 @@ new SkyItem("brass_ingot", "brass_ingot").setupComponentType("brass");
 new SkyItem("copper_ingot", "copper_ingot_as").setupComponentType("copper");
 new SkyItem("zinc_ingot", "zinc_ingot").onUse((c, i, b, p) =>
   Engineer.Mode.validate(p, () => {
-    Game.message("??");
+    Game.message("Work engineer mode");
   })
 ); //It is work, so good
 

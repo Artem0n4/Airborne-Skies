@@ -5,7 +5,7 @@ class MachineBlock extends SkyBlock {
     this.createWithRotation();
     Block.setDestroyTime(this.id, -1), this.destroyIfCondition();
     MachineBlock.machine_list.push(BlockID[this.id]);
-  }
+  };
   public static takeParticles(coords: Callback.ItemUseCoordinates) {
     const particle_list = MathHelper.randomValue(
       EParticleType.REDSTONE,

@@ -2,7 +2,6 @@ namespace Engineer {
   export const modes: Record<int, boolean> = {};
 
   export abstract class Mode {
-
     public static readonly HAMMER: SkyItem = new SkyItem(
       "engineer_hammer",
       "engineer_hammer",
@@ -18,7 +17,7 @@ namespace Engineer {
     private static readonly sendOffModeText = (player) =>
       BlockEngine.sendUnlocalizedMessage(
         Network.getClientForPlayer(player),
-        Native.Color.GREEN +
+        Native.Color.RED +
           Translation.translate("message.airborne_skyes.engineer_mode_false")
       );
 
@@ -33,11 +32,72 @@ namespace Engineer {
     public static switch(value: boolean, player: int) {
       const name = Entity.getNameTag(player);
       modes[name] = value;
-      Game.message(JSON.stringify(modes));
     }
-
     static {
-      Mode.HAMMER.setupDescription("message.airborne_skies.hammer", Native.Color.GRAY);
+      Mode.HAMMER.setupDescription(
+        "message.airborne_skies.hammer",
+        Native.Color.GRAY
+      );
     }
-  };
+  }
+
+  abstract class Hammer {
+    protected constructor() {}
+    private static list: { before: int; after: int }[] = [];
+    public static registerUpdateBlock(before: int, after: int = 0) {
+      this.list.push({ before, after });
+    }
+    private static update(
+      coords: Callback.ItemUseCoordinates,
+      item: ItemInstance,
+      block: Tile,
+      player: int
+    ) {
+      for (const list of Hammer.list) {
+        if (block.id === list.before) {
+          const region = BlockSource.getDefaultForActor(player);
+          region.destroyBlock(coords.x, coords.y, coords.z, false);
+          region.setBlock(coords.x, coords.y, coords.z, list.after, 0);
+          return;
+        }
+      }
+      MachineBlock.takeParticles(coords);
+    }
+    static {
+      Item.registerUseFunctionForID(
+        Mode.HAMMER.getID(),
+        (coords, item, block, player) => {
+         return Mode.validate(player, () => {
+            return this.update(coords, item, block, player);
+          })
+        }
+      );
+    }
+  }
+
+  //stone
+  Hammer.registerUpdateBlock(VanillaBlockID.stone, VanillaBlockID.cobblestone);
+  Hammer.registerUpdateBlock(VanillaBlockID.cobblestone, VanillaBlockID.gravel);
+  Hammer.registerUpdateBlock(VanillaBlockID.mossy_cobblestone, VanillaBlockID.gravel);
+  Hammer.registerUpdateBlock(VanillaBlockID.sandstone, VanillaBlockID.sand);
+  Hammer.registerUpdateBlock(VanillaBlockID.stonebrick, VanillaBlockID.cobblestone);
+  Hammer.registerUpdateBlock(VanillaBlockID.smooth_stone, VanillaBlockID.cobblestone);
+
+  //nature
+  Hammer.registerUpdateBlock(VanillaBlockID.grass, VanillaBlockID.dirt)
+  Hammer.registerUpdateBlock(VanillaBlockID.farmland, VanillaBlockID.dirt);
+  Hammer.registerUpdateBlock(VanillaBlockID.mycelium, VanillaBlockID.dirt);
+  Hammer.registerUpdateBlock(VanillaBlockID.grass_path, VanillaBlockID.dirt);
+  Hammer.registerUpdateBlock(VanillaBlockID.ice, VanillaBlockID.flowing_water);
+  Hammer.registerUpdateBlock(VanillaBlockID.blue_ice, VanillaBlockID.flowing_water);
+  Hammer.registerUpdateBlock(VanillaBlockID.packed_ice, VanillaBlockID.flowing_water);
+  Hammer.registerUpdateBlock(VanillaBlockID.frosted_ice, VanillaBlockID.flowing_water);
+
+  //glass
+  Hammer.registerUpdateBlock(VanillaBlockID.glass);
+  Hammer.registerUpdateBlock(VanillaBlockID.glass_pane);
+  Hammer.registerUpdateBlock(VanillaBlockID.hard_glass);
+  Hammer.registerUpdateBlock(VanillaBlockID.hard_glass_pane);
+  Hammer.registerUpdateBlock(VanillaBlockID.stained_glass);
+  Hammer.registerUpdateBlock(VanillaBlockID.stained_glass_pane);
 }
