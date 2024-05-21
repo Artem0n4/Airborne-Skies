@@ -4,7 +4,7 @@ DEBUG_TOOL.onUse((coords, item, block, player) => {
   if (Entity.getSneaking(player) === true) {
     return BlockEngine.sendUnlocalizedMessage(
       client,
-      Translation.translate("message.airborne_skies.debug.full_information") +
+      Native.Color.GREEN + Translation.translate("message.airborne_skies.debug.full_information") +
         "\n" +
         Translation.translate("message.airborne_skies.debug.mode_list") +
         JSON.stringify(Engineer.modes)
@@ -12,6 +12,6 @@ DEBUG_TOOL.onUse((coords, item, block, player) => {
   }
   return BlockEngine.sendUnlocalizedMessage(
     client,
-    Translation.translate("message.airborne_skies.debug.engineer_mode") + Engineer.modes[Entity.getNameTag(player)]
+    Native.Color.GREEN + Translation.translate("message.airborne_skies.debug.engineer_mode") + Native.Color.UNDERLINE + Native.Color.GOLD + Engineer.modes[Entity.getNameTag(player)]
   );
 });

@@ -6,7 +6,7 @@ class MachineBlock extends SkyBlock {
     Block.setDestroyTime(this.id, -1), this.destroyIfCondition();
     MachineBlock.machine_list.push(BlockID[this.id]);
   };
-  public static takeParticles(coords: Callback.ItemUseCoordinates) {
+  public static takeParticles(coords: Callback.ItemUseCoordinates | Vector) {
     const particle_list = MathHelper.randomValue(
       EParticleType.REDSTONE,
       EParticleType.CRIT
@@ -51,7 +51,12 @@ class MachineBlock extends SkyBlock {
         MachineBlock.takeParticles(coords);
     }
   });
+
+  };
+  public setupLogic(prototype: TileEntityBase) {
+      return TileEntity.registerPrototype(BlockID[this.id], prototype)
   }
+
   static {
     Callback.addCallback("DestroyBlockContinue", (coords, block, player) => {
       if (MachineBlock.machine_list.includes(block.id) && MathHelper.randomInt(0, 100) < 5)

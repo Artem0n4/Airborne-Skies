@@ -7,4 +7,6 @@ Sky/EngineerMode.ts
 Sky/glasses.ts
 API/MachineBlock.ts
 Machine/Frame.ts
+Machine/Table.ts
+Machine/Press.ts
 final.ts
