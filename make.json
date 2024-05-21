@@ -8,7 +8,7 @@
 			"path": "assets/gui",
 			"type": "gui"
 		},
-		{"path": "person",
+		{"path": "models",
 	     "type": "resource_directory"
 		}
 	],

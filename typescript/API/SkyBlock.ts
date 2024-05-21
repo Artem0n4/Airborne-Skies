@@ -36,14 +36,14 @@ class SkyBlock {
         return Translation.translate(name) + Native.Color.GOLD + Translation.translate(text);
       });
     }
-    public setupModel(texture, model, scale?: [int, int, int]) {
+    public setupModel(texture: string, model: string, scale: [int, int, int] = [1, 1, 1]) {
       const mesh = new RenderMesh();
       mesh.setBlockTexture(texture, 0);
       mesh.importFromFile(
         __dir__ + "/resources/models/" + (model || texture) + ".obj",
         "obj",
         {
-          translate: [0.5, 0.5, 0.5],
+          translate: [0.5, 0, 0.5],
           scale: scale,
           invertV: false,
           noRebuild: false,

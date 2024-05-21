@@ -12,6 +12,7 @@ const ru_RU = {
     "item.airborne_skies.debug_engineer_tool": "Предмет для отладки",
     "item.airborne_skies.metal_shears": "Ножницы по металлу",
     "block.airborne_skies.steam_frame": "Корпус",
+    "block.airborne_skies.engineer_table": "Инженерный стол",
     "type: ": "тип: ",
     "brass": "латунь",
     "zinc": "цинк",

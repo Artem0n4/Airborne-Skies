@@ -46,31 +46,25 @@ class Table extends TileEntityBase {
     if (!this.validateItem(item.id) || Entity.getSneaking(player) === true) {
       return MachineBlock.takeParticles({
         x: this.x,
-        y: this.y + 0.6,
+        y: this.y + 0.5,
         z: this.z,
       });
-    };
-    this.networkData.putInt("id", this.data.id);
+    }
+    this.networkData.putInt("id", item.id);
     return this.itemManipulate(item, player);
   }
   clientLoad(): void {
     const animation = (this["animation"] = new Animation.Item(
       this.x + 0.5,
-      this.y + 1.025,
+      this.y + 0.05,
       this.z + 0.5
     ) as Animation.Item);
     animation.load();
   }
   clientUnload(): void {
-    this.data.id !== 0 &&
-     /* this.blockSource.spawnDroppedItem(
-        this.x,
-        this.y + 1,
-        this.z,
-        this.networkData.getInt("id"),
-        1,
-        0
-      );*/
+    const id = this.networkData.getInt("id");
+    id !== 0 &&
+      this.blockSource.spawnDroppedItem(this.x, this.y + 1, this.z, id, 1, 0);
     const animation = this["animation"] as Animation.Item;
     animation && animation.destroy();
   }
@@ -78,11 +72,13 @@ class Table extends TileEntityBase {
 
 const TABLE = new MachineBlock("engineer_table", [
   {
-    texture: [["frame_as", 0]],
-    name: "block.airborne_skies.steam_frame",
+    texture: [["stone_slab_top", 0]],
+    name: "block.airborne_skies.engineer_table",
     inCreative: true,
   },
 ]);
+
 TABLE.createWithRotation();
+TABLE.setupModel("engineer_table", "table");
 TABLE.setupLogic(new Table());
 Table.registerPressRecipe(VanillaItemID.coal, VanillaItemID.diamond);
