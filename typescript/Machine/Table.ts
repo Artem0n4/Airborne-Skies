@@ -1,16 +1,41 @@
 class Table extends TileEntityBase {
-  public static recipe_list: { input: int; output: int }[] = [];
-  public static registerPressRecipe(input: int, output: int): void {
-    Table.recipe_list.push({ input, output });
+  public static recipe_list: { input: int; output: int; cutted: int }[] = [];
+  public static registerPressRecipe(
+    input: int,
+    output: int,
+    cutted?: int
+  ): void {
+    Table.recipe_list.push({ input, output, cutted: cutted || 0 });
   }
   public defaultValues = {
     id: 0,
   };
   public static validateItem(input_id: int): boolean {
     for (const list of Table.recipe_list) {
-      if (list.input === input_id || input_id === 0) return true;
+      if (
+        list.input === input_id ||
+        input_id === 0 ||
+        input_id === Engineer.Mode.METAL_SHEARS.getID()
+      )
+        return true;
     }
     return false;
+  }
+  protected plateManipulate(item: ItemInstance) {
+    if (item.id !== Engineer.Mode.METAL_SHEARS.getID()) {
+      return MachineBlock.takeParticles({
+        x: this.x,
+        y: this.y + 0.5,
+        z: this.z,
+      });
+    }
+    for (const list of Table.recipe_list) {
+      if (list.output === this.data.id && list.cutted !== 0) {
+        this.data.id = list.cutted;
+        this.sendPacket("updateVisual", { id: list.cutted });
+        return;
+      }
+    }
   }
   @BlockEngine.Decorators.NetworkEvent(Side.Client)
   public updateVisual(data: { id: int }) {
@@ -51,22 +76,36 @@ class Table extends TileEntityBase {
       });
     }
     this.networkData.putInt("id", item.id);
-    return this.itemManipulate(item, player);
-  }
+    if (item.id === Engineer.Mode.METAL_SHEARS.getID()) {
+      return this.plateManipulate(item);
+    } else {
+      this.itemManipulate(item, player);
+    }
+  };
   clientLoad(): void {
     const animation = (this["animation"] = new Animation.Item(
       this.x + 0.5,
-      this.y + 1.05,
+      this.y + 1.0,
       this.z + 0.5
     ) as Animation.Item);
     animation.load();
   }
   clientUnload(): void {
-    const id = this.networkData.getInt("id");
-    id !== 0 &&
-      this.blockSource.spawnDroppedItem(this.x, this.y + 1, this.z, id, 1, 0);
     const animation = this["animation"] as Animation.Item;
     animation && animation.destroy();
+  }
+  destroy(): any {
+    if (this.data.id === 0) return;
+     this.blockSource.spawnDroppedItem(
+      this.x,
+      this.y + 1,
+      this.z,
+      this.data.id,
+      1,
+      0
+    );
+    this.data.id = 0;
+    return false;
   }
 }
 
@@ -82,3 +121,8 @@ TABLE.createWithRotation();
 TABLE.setupModel("engineer_table", "table");
 TABLE.setupLogic(new Table());
 Table.registerPressRecipe(VanillaItemID.coal, VanillaItemID.diamond);
+Table.registerPressRecipe(
+  ItemID["brass_ingot"],
+  ItemID["copper_ingot"],
+  ItemID["zinc_ingot"]
+);

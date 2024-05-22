@@ -38,3 +38,12 @@ const BLOCK_TYPE_ALPHAMODE = Block.createSpecialType({
     destroytime: .4,
     renderlayer: 1,
 });
+
+const BLOCK_TYPE_STONE = Block.createSpecialType({
+    solid: true,
+    material: 4,
+    destroytime: 5,
+    renderlayer: 3,
+    rendertype: 0,
+    translucency: 0,
+});

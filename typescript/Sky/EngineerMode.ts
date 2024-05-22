@@ -47,7 +47,7 @@ namespace Engineer {
     }
   }
 
-  abstract class Hammer {
+  export abstract class Hammer {
     protected constructor() {}
     private static list: { before: int; after: int }[] = [];
     public static registerUpdateBlock(before: int): void;

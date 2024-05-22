@@ -5,11 +5,18 @@ class Press extends TileEntityBase {
     active: false,
     progress: 0,
   };
+  private static PRESS_INPUT_LIST = Table.recipe_list.reduce(
+    (previousValue: int[], currentValue) => {
+      previousValue.push(currentValue.input);
+      return previousValue;
+    },
+    []
+  );
   constructor(public strength: int) {
     super();
   }
   onRedstoneUpdate(signal: number): void {
-    if (this.data.active !== true && signal === Press.REDSTONE_SIGNAL_VALUE ) {
+    if (this.data.active !== true && signal === Press.REDSTONE_SIGNAL_VALUE) {
       this.data.active = true;
     } else {
       this.data.active = false;
@@ -34,21 +41,34 @@ class Press extends TileEntityBase {
   }
   protected increaseProgress(tile: TileEntity) {
     if (
-      Table.recipe_list.some((value) => value.input === tile.data.id) &&
+      Press.PRESS_INPUT_LIST.includes(tile.data.id) &&
       this.data.progress < Press.PROGRESS_MAX
     ) {
       this.data.progress++;
       Game.message("Plus: " + this.data.progress);
       return;
-    }
+    } 
     return;
+  }
+  private particles() {
+    for (let i = 0; i <= 6; i++) {
+      Particles.addParticle(
+        EParticleType.FLAME,
+        this.x + 0.5,
+        this.y - 1.9 + Math.random() / i,
+        this.z + 0.5,
+        0,
+        0.1,
+        0
+      );
+    }
   }
   protected releaseRecipe(tile: TileEntity) {
     if (this.data.progress >= Press.PROGRESS_MAX) {
       for (const list of Table.recipe_list) {
         if (tile.data.id === list.input) {
           tile.data.id = list.output;
-          this.data.progress = 0;
+          this.particles();
           return (
             tile.sendPacket("updateVisual", { id: list.output }),
             Game.message("Table.id: " + tile.data.id)
@@ -63,7 +83,7 @@ class Press extends TileEntityBase {
     if (this.validateTable(tile)) {
       if (World.getThreadTime() % 5 === 0) {
         this.decreaseProgress(tile);
-        this.increaseProgress(tile);
+       tile.data.id !== 0 && this.increaseProgress(tile);
       }
       this.releaseRecipe(tile);
     }

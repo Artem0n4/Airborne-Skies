@@ -5,7 +5,7 @@ class SkyBlock {
       public data: Block.BlockVariation[],
       type?: string | Block.SpecialType
     ) {
-        this.type = type || "stone"
+        this.type = type || BLOCK_TYPE_STONE
     }
     public create(): this {
       IDRegistry.genBlockID(this.id);
