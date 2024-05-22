@@ -52,6 +52,10 @@ class SkyBlock {
       const render = new ICRender.Model();
       render.addEntry(new BlockRenderer.Model(mesh));
       BlockRenderer.setStaticICRender(BlockID[this.id], 0, render);
-    }
+    };
+  
+    public getID() {
+      return BlockID[this.id]
+    } 
   }
   

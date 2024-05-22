@@ -6,7 +6,7 @@ class Table extends TileEntityBase {
   public defaultValues = {
     id: 0,
   };
-  protected validateItem(input_id: int): boolean {
+  public static validateItem(input_id: int): boolean {
     for (const list of Table.recipe_list) {
       if (list.input === input_id || input_id === 0) return true;
     }
@@ -43,7 +43,7 @@ class Table extends TileEntityBase {
     item: ItemStack,
     player: number
   ): any {
-    if (!this.validateItem(item.id) || Entity.getSneaking(player) === true) {
+    if (!Table.validateItem(item.id) || Entity.getSneaking(player) === true) {
       return MachineBlock.takeParticles({
         x: this.x,
         y: this.y + 0.5,
@@ -56,7 +56,7 @@ class Table extends TileEntityBase {
   clientLoad(): void {
     const animation = (this["animation"] = new Animation.Item(
       this.x + 0.5,
-      this.y + 0.05,
+      this.y + 1.05,
       this.z + 0.5
     ) as Animation.Item);
     animation.load();
