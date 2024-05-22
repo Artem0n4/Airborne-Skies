@@ -5,13 +5,6 @@ class Press extends TileEntityBase {
     active: false,
     progress: 0,
   };
-  private static PRESS_INPUT_LIST = Table.recipe_list.reduce(
-    (previousValue: int[], currentValue) => {
-      previousValue.push(currentValue.input);
-      return previousValue;
-    },
-    []
-  );
   constructor(public strength: int) {
     super();
   }
@@ -41,7 +34,7 @@ class Press extends TileEntityBase {
   }
   protected increaseProgress(tile: TileEntity) {
     if (
-      Press.PRESS_INPUT_LIST.includes(tile.data.id) &&
+      Table.recipe_list.some((value) => value.input === tile.data.id) &&
       this.data.progress < Press.PROGRESS_MAX
     ) {
       this.data.progress++;

@@ -22,13 +22,6 @@ class Table extends TileEntityBase {
     return false;
   }
   protected plateManipulate(item: ItemInstance) {
-    if (item.id !== Engineer.Mode.METAL_SHEARS.getID()) {
-      return MachineBlock.takeParticles({
-        x: this.x,
-        y: this.y + 0.5,
-        z: this.z,
-      });
-    }
     for (const list of Table.recipe_list) {
       if (list.output === this.data.id && list.cutted !== 0) {
         this.data.id = list.cutted;
@@ -49,18 +42,21 @@ class Table extends TileEntityBase {
         rotation: [Math.PI / 2, 0, 0],
       });
     animation.load();
+  };
+  private updateId(id: int) {
+    this.data.id = id;
+    this.sendPacket("updateVisual", { id });
+    return;
   }
-  protected itemManipulate(item: ItemInstance, entity: int) {
-    const player = new PlayerEntity(entity);
+  protected itemManipulate(item: ItemInstance, player: PlayerEntity) {
     if (player.getCarriedItem().id === 0 && this.data.id !== 0) {
-      const id = this.data.id;
-      this.sendPacket("updateVisual", { id: 0 });
-      return player.setCarriedItem(new ItemStack(id, 1, 0));
+     player.setCarriedItem(new ItemStack(this.data.id, 1, 0));
+     this.updateId(0);
+     return;
     } else {
-      const id = player.getCarriedItem().id;
-      this.data.id = id;
-      this.sendPacket("updateVisual", { id });
-      return player.decreaseCarriedItem(1);
+      this.updateId(player.getCarriedItem().id);
+      player.decreaseCarriedItem(1);
+      return;
     }
   }
   public onItemUse(
@@ -75,11 +71,10 @@ class Table extends TileEntityBase {
         z: this.z,
       });
     }
-    this.networkData.putInt("id", item.id);
     if (item.id === Engineer.Mode.METAL_SHEARS.getID()) {
       return this.plateManipulate(item);
     } else {
-      this.itemManipulate(item, player);
+      this.itemManipulate(item, new PlayerEntity(player));
     }
   };
   clientLoad(): void {
