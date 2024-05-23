@@ -40,7 +40,7 @@ class SkyBlock {
       const mesh = new RenderMesh();
       mesh.setBlockTexture(texture, 0);
       mesh.importFromFile(
-        __dir__ + "/resources/models/" + (model || texture) + ".obj",
+        __dir__ + "/resources/assets/models/" + (model || texture) + ".obj",
         "obj",
         {
           translate: [0.5, 0, 0.5],

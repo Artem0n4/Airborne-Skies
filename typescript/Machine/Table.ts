@@ -10,26 +10,6 @@ class Table extends TileEntityBase {
   public defaultValues = {
     id: 0,
   };
-  public static validateItem(input_id: int): boolean {
-    for (const list of Table.recipe_list) {
-      if (
-        list.input === input_id ||
-        input_id === 0 ||
-        input_id === Engineer.Mode.METAL_SHEARS.getID()
-      )
-        return true;
-    }
-    return false;
-  }
-  protected plateManipulate(item: ItemInstance) {
-    for (const list of Table.recipe_list) {
-      if (list.output === this.data.id && list.cutted !== 0) {
-        this.data.id = list.cutted;
-        this.sendPacket("updateVisual", { id: list.cutted });
-        return;
-      }
-    }
-  }
   @BlockEngine.Decorators.NetworkEvent(Side.Client)
   public updateVisual(data: { id: int }) {
     const animation = this["animation"] as Animation.Item;
@@ -43,11 +23,30 @@ class Table extends TileEntityBase {
       });
     animation.load();
   };
+  public static validateItem(input_id: int): boolean {
+    for (const list of Table.recipe_list) {
+      if (
+        list.input === input_id ||
+        input_id === 0 ||
+        input_id === Engineer.Mode.METAL_SHEARS.getID()
+      )
+        return true;
+    }
+    return false;
+  };
   private updateId(id: int) {
     this.data.id = id;
     this.sendPacket("updateVisual", { id });
     return;
-  }
+  };
+  protected plateManipulate(item: ItemInstance) {
+    for (const list of Table.recipe_list) {
+      if (list.output === this.data.id && list.cutted !== 0) {
+        this.updateId(list.cutted);
+        return;
+      }
+    }
+  };
   protected itemManipulate(item: ItemInstance, player: PlayerEntity) {
     if (player.getCarriedItem().id === 0 && this.data.id !== 0) {
      player.setCarriedItem(new ItemStack(this.data.id, 1, 0));
@@ -80,7 +79,7 @@ class Table extends TileEntityBase {
   clientLoad(): void {
     const animation = (this["animation"] = new Animation.Item(
       this.x + 0.5,
-      this.y + 1.0,
+      this.y + 0.45,
       this.z + 0.5
     ) as Animation.Item);
     animation.load();
@@ -93,7 +92,7 @@ class Table extends TileEntityBase {
     if (this.data.id === 0) return;
      this.blockSource.spawnDroppedItem(
       this.x,
-      this.y + 1,
+      this.y + 0.5,
       this.z,
       this.data.id,
       1,

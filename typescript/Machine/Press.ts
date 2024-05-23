@@ -1,9 +1,11 @@
 class Press extends TileEntityBase {
   public static REDSTONE_SIGNAL_VALUE = 15;
   public static PROGRESS_MAX = 50;
+  public static ANIMATION_VALUE_MAX = 64;
   public defaultValues = {
     active: false,
     progress: 0,
+    animation_value: 0,
   };
   constructor(public strength: int) {
     super();
@@ -17,7 +19,7 @@ class Press extends TileEntityBase {
   }
   protected validateTable(tile: TileEntity) {
     if (
-      this.blockSource.getBlockId(this.x, this.y - 2, this.z) ===
+      this.blockSource.getBlockId(this.x, this.y - 1, this.z) ===
         TABLE.getID() &&
       tile
     ) {
@@ -40,7 +42,7 @@ class Press extends TileEntityBase {
       this.data.progress++;
       Game.message("Plus: " + this.data.progress);
       return;
-    } 
+    }
     return;
   }
   private particles() {
@@ -62,24 +64,49 @@ class Press extends TileEntityBase {
         if (tile.data.id === list.input) {
           tile.data.id = list.output;
           this.particles();
-          return (
-            tile.sendPacket("updateVisual", { id: list.output }),
-            Game.message("Table.id: " + tile.data.id)
-          );
+          return tile.sendPacket("updateVisual", { id: list.output });
         }
       }
     }
   }
   onTick(): void {
     if (this.data.active !== true) return;
-    const tile = TileEntity.getTileEntity(this.x, this.y - 2, this.z);
+    const tile = TileEntity.getTileEntity(this.x, this.y - 1, this.z);
     if (this.validateTable(tile)) {
       if (World.getThreadTime() % 5 === 0) {
+        this.networkData.putInt("progress", this.data.progress);
+        this.networkData.putInt("animation_value", this.data.animation_value);
         this.decreaseProgress(tile);
-       tile.data.id !== 0 && this.increaseProgress(tile);
+        tile.data.id !== 0 && this.increaseProgress(tile);
       }
       this.releaseRecipe(tile);
     }
+  }
+
+  clientLoad(): void {
+    const mesh = new RenderMesh();
+    mesh.importFromFile(
+      __dir__ + "/resources/assets/models/press_piston.obj",
+      "obj",
+      {
+        invertV: false,
+        noRebuild: false,
+      }
+    );
+    const animation = (this["animation"] = new Animation.Base(
+      this.x + 0.5,
+      this.y,
+      this.z + 0.5
+    ) as Animation.Base);
+    animation.describe({
+      mesh,
+      skin: "models/press",
+    });
+    animation.setBlocklightMode();
+  }
+  clientUnload(): void {
+    const animation = this["animation"] as Animation.Base;
+    animation && animation.destroy();
   }
 }
 
@@ -92,4 +119,5 @@ const PRESS = new MachineBlock("engineer_press", [
 ]);
 
 PRESS.createWithRotation();
+PRESS.setupModel("press", "press_base");
 PRESS.setupLogic(new Press(125));
