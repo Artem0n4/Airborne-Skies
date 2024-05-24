@@ -1,5 +1,9 @@
 class Table extends TileEntityBase {
   public static recipe_list: { input: int; output: int; cutted: int }[] = [];
+  /**register recipe without cutting */
+  public static registerPressRecipe(input: int, output: int): void
+  /**register recipe includes cutted variant of plate*/
+  public static registerPressRecipe(input: int, output: int, cutted: int): void
   public static registerPressRecipe(
     input: int,
     output: int,
@@ -11,7 +15,7 @@ class Table extends TileEntityBase {
     id: 0,
   };
   @BlockEngine.Decorators.NetworkEvent(Side.Client)
-  public updateVisual(data: { id: int }) {
+  protected updateVisual(data: { id: int }) {
     const animation = this["animation"] as Animation.Item;
     animation &&
       animation.describeItem({
@@ -79,7 +83,7 @@ class Table extends TileEntityBase {
   clientLoad(): void {
     const animation = (this["animation"] = new Animation.Item(
       this.x + 0.5,
-      this.y + 0.45,
+      this.y + 0.2,
       this.z + 0.5
     ) as Animation.Item);
     animation.load();
@@ -87,9 +91,10 @@ class Table extends TileEntityBase {
   clientUnload(): void {
     const animation = this["animation"] as Animation.Item;
     animation && animation.destroy();
-  }
+  };
   destroy(): any {
     if (this.data.id === 0) return;
+    this.sendPacket("updateVisual", { id: 0 });
      this.blockSource.spawnDroppedItem(
       this.x,
       this.y + 0.5,

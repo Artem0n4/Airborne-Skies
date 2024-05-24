@@ -1,7 +1,6 @@
 class Press extends TileEntityBase {
   public static REDSTONE_SIGNAL_VALUE = 15;
   public static PROGRESS_MAX = 50;
-  public static ANIMATION_VALUE_MAX = 64;
   public defaultValues = {
     active: false,
     progress: 0,
@@ -9,14 +8,20 @@ class Press extends TileEntityBase {
   };
   constructor(public strength: int) {
     super();
-  }
-  onRedstoneUpdate(signal: number): void {
-    if (this.data.active !== true && signal === Press.REDSTONE_SIGNAL_VALUE) {
+  };
+  @BlockEngine.Decorators.NetworkEvent(Side.Client)
+  protected movePiston(data: Vector): void {
+    const animation = this["animation"] as BlockAnimation;
+    animation && animation.setPos(data.x, data.y, data.z);
+    animation.refresh();
+  };
+  public onRedstoneUpdate(signal: number): void {
+    if (this.data.active === false && signal === Press.REDSTONE_SIGNAL_VALUE) {
       this.data.active = true;
     } else {
       this.data.active = false;
     }
-  }
+  };
   protected validateTable(tile: TileEntity) {
     if (
       this.blockSource.getBlockId(this.x, this.y - 1, this.z) ===
@@ -25,26 +30,21 @@ class Press extends TileEntityBase {
     ) {
       return true;
     }
-  }
+  };
   protected decreaseProgress(tile: TileEntity) {
-    if (tile.data.id === 0 && this.data.progress > 0) {
+    if (this.data.progress > 0) {
       this.data.progress--;
-      Game.message("Minus: " + this.data.progress);
+      this.sendPacket("movePiston", new Vector3(this.x, this.y + (this.data.progress / 60 * -1), this.z));
       return;
     }
-    return;
-  }
+  };
   protected increaseProgress(tile: TileEntity) {
-    if (
-      Table.recipe_list.some((value) => value.input === tile.data.id) &&
-      this.data.progress < Press.PROGRESS_MAX
-    ) {
+    if (this.data.progress < Press.PROGRESS_MAX) {
       this.data.progress++;
-      Game.message("Plus: " + this.data.progress);
+      this.sendPacket("movePiston", new Vector3(this.x, this.y - this.data.progress / 60, this.z));
       return;
     }
-    return;
-  }
+  };
   private particles() {
     for (let i = 0; i <= 6; i++) {
       Particles.addParticle(
@@ -52,12 +52,12 @@ class Press extends TileEntityBase {
         this.x + 0.5,
         this.y - 1.9 + Math.random() / i,
         this.z + 0.5,
-        0,
+        0.003,
         0.1,
-        0
+        0.003
       );
     }
-  }
+  };
   protected releaseRecipe(tile: TileEntity) {
     if (this.data.progress >= Press.PROGRESS_MAX) {
       for (const list of Table.recipe_list) {
@@ -68,47 +68,42 @@ class Press extends TileEntityBase {
         }
       }
     }
-  }
+  };
   onTick(): void {
-    if (this.data.active !== true) return;
+    if (this.data.active === false) return;
     const tile = TileEntity.getTileEntity(this.x, this.y - 1, this.z);
     if (this.validateTable(tile)) {
-      if (World.getThreadTime() % 5 === 0) {
+      if (World.getThreadTime() % 1 === 0) {
         this.networkData.putInt("progress", this.data.progress);
         this.networkData.putInt("animation_value", this.data.animation_value);
-        this.decreaseProgress(tile);
-        tile.data.id !== 0 && this.increaseProgress(tile);
+        if (Table.recipe_list.some((value) => value.input === tile.data.id)) {
+          return this.increaseProgress(tile), this.releaseRecipe(tile);
+        } else {
+          return this.decreaseProgress(tile);
+        }
       }
-      this.releaseRecipe(tile);
     }
-  }
-
+  };
   clientLoad(): void {
-    const mesh = new RenderMesh();
-    mesh.importFromFile(
-      __dir__ + "/resources/assets/models/press_piston.obj",
-      "obj",
+    const animation = (this["animation"] = new BlockAnimation(
+      new Vector3(this.x, this.y, this.z),
+      "press_piston",
+      "press",
       {
-        invertV: false,
-        noRebuild: false,
+        model: {
+          invertV: false,
+          noRebuild: false,
+          translate: [0.5, 0, 0.5],
+        },
       }
-    );
-    const animation = (this["animation"] = new Animation.Base(
-      this.x + 0.5,
-      this.y,
-      this.z + 0.5
-    ) as Animation.Base);
-    animation.describe({
-      mesh,
-      skin: "models/press",
-    });
-    animation.setBlocklightMode();
-  }
+    ));
+    animation.load();
+  };
   clientUnload(): void {
-    const animation = this["animation"] as Animation.Base;
+    const animation = this["animation"] as BlockAnimation;
     animation && animation.destroy();
-  }
-}
+  };
+};
 
 const PRESS = new MachineBlock("engineer_press", [
   {

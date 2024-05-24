@@ -34,4 +34,3 @@ const ArrayHelper = {
   return array.reduce((previousValue, currentValue) => previousValue.concat(currentValue), []) 
   }
 }
-
