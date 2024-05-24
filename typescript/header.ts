@@ -6,6 +6,7 @@ type animation_texture_descriptor = {texture: string, frame: int, time?: int}
 type item_texture<T extends string | animation_texture_descriptor> = T;
 type component = 'brass' | 'iron' | 'gold' | 'copper' | 'zinc'
 
+/**__ dir __ + resources/assets/models/ */
 const models_dir = __dir__ + "resources/assets/models/";
 
 enum EMachineTool {

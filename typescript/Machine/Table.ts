@@ -1,21 +1,22 @@
 class Table extends TileEntityBase {
   public static recipe_list: { input: int; output: int; cutted: int }[] = [];
   /**register recipe without cutting */
-  public static registerPressRecipe(input: int, output: int): void
+  public static registerPressRecipe(input: int, output: int): void;
   /**register recipe includes cutted variant of plate*/
-  public static registerPressRecipe(input: int, output: int, cutted: int): void
+  public static registerPressRecipe(input: int, output: int, cutted: int): void;
   public static registerPressRecipe(
     input: int,
     output: int,
-    cutted?: int
+    cutted: int = 0
   ): void {
-    Table.recipe_list.push({ input, output, cutted: cutted || 0 });
+    Table.recipe_list.push({ input, output, cutted });
   }
   public defaultValues = {
     id: 0,
+    lock: false,
   };
   @BlockEngine.Decorators.NetworkEvent(Side.Client)
-  protected updateVisual(data: { id: int }) {
+  protected updateVisual(data: { id: int; rotation?: int }) {
     const animation = this["animation"] as Animation.Item;
     animation &&
       animation.describeItem({
@@ -23,10 +24,10 @@ class Table extends TileEntityBase {
         count: 1,
         data: 0,
         size: 0.4,
-        rotation: [Math.PI / 2, 0, 0],
+        rotation: [Math.PI / 2, 0, MathHelper.radian(data?.rotation || 0)],
       });
     animation.load();
-  };
+  }
   public static validateItem(input_id: int): boolean {
     for (const list of Table.recipe_list) {
       if (
@@ -37,12 +38,21 @@ class Table extends TileEntityBase {
         return true;
     }
     return false;
-  };
-  private updateId(id: int) {
-    this.data.id = id;
-    this.sendPacket("updateVisual", { id });
+  }
+  public lockAction(player: int) {
+    if (this.data.lock === false) return;
+    const client = Network.getClientForPlayer(player);
+    sendTipMessage(client, "message.airborne_skies.table_lock", [
+      Native.Color.BOLD,
+      Native.Color.RED,
+    ]);
     return;
-  };
+  }
+  private updateId(id: int, rotation = MathHelper.randomInt(0, 360)) {
+    this.data.id = id;
+    this.sendPacket("updateVisual", { id, rotation });
+    return;
+  }
   protected plateManipulate(item: ItemInstance) {
     for (const list of Table.recipe_list) {
       if (list.output === this.data.id && list.cutted !== 0) {
@@ -50,36 +60,47 @@ class Table extends TileEntityBase {
         return;
       }
     }
-  };
+  }
   protected itemManipulate(item: ItemInstance, player: PlayerEntity) {
-    if (player.getCarriedItem().id === 0 && this.data.id !== 0) {
-     player.setCarriedItem(new ItemStack(this.data.id, 1, 0));
-     this.updateId(0);
-     return;
-    } else {
-      this.updateId(player.getCarriedItem().id);
+    const hand_item = player.getCarriedItem().id;
+    const table_item = this.data.id;
+    if (hand_item !== 0 && table_item !== 0) {
       player.decreaseCarriedItem(1);
-      return;
+      player.addItemToInventory(new ItemStack(table_item, 1, 0));
+      this.updateId(hand_item);
+    } else if (hand_item === 0 && table_item !== 0) {
+      player.setCarriedItem(new ItemStack(table_item, 1, 0));
+      this.updateId(0);
+    } else {
+      this.updateId(hand_item);
+      player.decreaseCarriedItem(1);
     }
+    return;
   }
   public onItemUse(
     coords: Callback.ItemUseCoordinates,
     item: ItemStack,
     player: number
   ): any {
-    if (!Table.validateItem(item.id) || Entity.getSneaking(player) === true) {
-      return MachineBlock.takeParticles({
+    if (
+      !Table.validateItem(item.id) ||
+      Entity.getSneaking(player) === true ||
+      this.data.lock === true
+    ) {
+      MachineBlock.takeParticles({
         x: this.x,
-        y: this.y + 0.5,
+        y: this.y + 0.2,
         z: this.z,
       });
+      this.lockAction(player);
+      return;
     }
     if (item.id === Engineer.Mode.METAL_SHEARS.getID()) {
       return this.plateManipulate(item);
     } else {
-      this.itemManipulate(item, new PlayerEntity(player));
+      return this.itemManipulate(item, new PlayerEntity(player));
     }
-  };
+  }
   clientLoad(): void {
     const animation = (this["animation"] = new Animation.Item(
       this.x + 0.5,
@@ -91,11 +112,11 @@ class Table extends TileEntityBase {
   clientUnload(): void {
     const animation = this["animation"] as Animation.Item;
     animation && animation.destroy();
-  };
+  }
   destroy(): any {
     if (this.data.id === 0) return;
     this.sendPacket("updateVisual", { id: 0 });
-     this.blockSource.spawnDroppedItem(
+    this.blockSource.spawnDroppedItem(
       this.x,
       this.y + 0.5,
       this.z,

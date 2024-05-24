@@ -55,8 +55,38 @@ class MachineBlock extends SkyBlock {
   };
   public setupLogic(prototype: TileEntityBase) {
       return TileEntity.registerPrototype(BlockID[this.id], prototype)
+  };
+  protected model(model: string, import_params: RenderMesh.ImportParams) {
+    const mesh = new RenderMesh();
+    mesh.importFromFile(
+      models_dir + model + ".obj",
+      "obj",
+      import_params || null
+    );
+    return mesh;
   }
-
+  public setHandModel(model_name: string, texture: string, import_params?: RenderMesh.ImportParams) {
+    const model = ItemModel.getForWithFallback(BlockID[this.id], 0);
+    model.setHandModel(
+      this.model(model_name, import_params),
+      "models/" + texture
+    );
+  }
+  public setItemModel(model_name: string, texture: string, import_params?: RenderMesh.ImportParams) {
+    const model = ItemModel.getForWithFallback(BlockID[this.id], 0);
+    model.setModel(this.model(model_name, import_params), "models/" + texture);
+  };
+  public setInventoryModel(
+    model_name: string,
+    texture: string,
+    import_params?: RenderMesh.ImportParams,
+    rotation: [rx: int, ry: int, rz: int] = [0, 0, 0]
+  ) {
+    const mesh = this.model(model_name, import_params) as RenderMesh;
+    mesh.rotate(rotation[0], rotation[1], rotation[2]);
+    const model = ItemModel.getForWithFallback(BlockID[this.id], 0);
+    model.setUiModel(mesh, "models/" + texture);
+  };
   static {
     Callback.addCallback("DestroyBlockContinue", (coords, block, player) => {
       if (MachineBlock.machine_list.includes(block.id) && MathHelper.randomInt(0, 100) < 5)

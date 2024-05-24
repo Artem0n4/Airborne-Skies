@@ -1,6 +1,6 @@
 class Press extends TileEntityBase {
   public static REDSTONE_SIGNAL_VALUE = 15;
-  public static PROGRESS_MAX = 50;
+  public static PROGRESS_MAX = 80;
   public defaultValues = {
     active: false,
     progress: 0,
@@ -8,12 +8,11 @@ class Press extends TileEntityBase {
   };
   constructor(public strength: int) {
     super();
-  };
+  }
   @BlockEngine.Decorators.NetworkEvent(Side.Client)
   protected movePiston(data: Vector): void {
     const animation = this["animation"] as BlockAnimation;
-    animation && animation.setPos(data.x, data.y, data.z);
-    animation.refresh();
+    animation.setPos(data.x, data.y, data.z);
   };
   public onRedstoneUpdate(signal: number): void {
     if (this.data.active === false && signal === Press.REDSTONE_SIGNAL_VALUE) {
@@ -21,7 +20,7 @@ class Press extends TileEntityBase {
     } else {
       this.data.active = false;
     }
-  };
+  }
   protected validateTable(tile: TileEntity) {
     if (
       this.blockSource.getBlockId(this.x, this.y - 1, this.z) ===
@@ -30,21 +29,33 @@ class Press extends TileEntityBase {
     ) {
       return true;
     }
-  };
+  }
   protected decreaseProgress(tile: TileEntity) {
     if (this.data.progress > 0) {
       this.data.progress--;
-      this.sendPacket("movePiston", new Vector3(this.x, this.y + (this.data.progress / 60 * -1), this.z));
+      this.sendPacket(
+        "movePiston",
+        new Vector3(this.x, this.y + (this.data.progress / 100) * -1, this.z)
+      );
       return;
     }
-  };
+  }
   protected increaseProgress(tile: TileEntity) {
     if (this.data.progress < Press.PROGRESS_MAX) {
       this.data.progress++;
-      this.sendPacket("movePiston", new Vector3(this.x, this.y - this.data.progress / 60, this.z));
+      this.sendPacket(
+        "movePiston",
+        new Vector3(this.x, this.y - this.data.progress / 100, this.z)
+      );
+      if (
+        this.data.progress > Press.PROGRESS_MAX / 3 &&
+        tile.data.lock === false
+      ) {
+        tile.data.lock = true;
+      }
       return;
     }
-  };
+  }
   private particles() {
     for (let i = 0; i <= 6; i++) {
       Particles.addParticle(
@@ -57,25 +68,28 @@ class Press extends TileEntityBase {
         0.003
       );
     }
-  };
+  }
   protected releaseRecipe(tile: TileEntity) {
     if (this.data.progress >= Press.PROGRESS_MAX) {
       for (const list of Table.recipe_list) {
         if (tile.data.id === list.input) {
           tile.data.id = list.output;
+          tile.data.lock = false;
           this.particles();
-          return tile.sendPacket("updateVisual", { id: list.output });
+          tile.sendPacket("updateVisual", {
+            id: list.output,
+            rotation: MathHelper.randomInt(1, 360),
+          });
+          return;
         }
       }
     }
-  };
+  }
   onTick(): void {
     if (this.data.active === false) return;
     const tile = TileEntity.getTileEntity(this.x, this.y - 1, this.z);
     if (this.validateTable(tile)) {
       if (World.getThreadTime() % 1 === 0) {
-        this.networkData.putInt("progress", this.data.progress);
-        this.networkData.putInt("animation_value", this.data.animation_value);
         if (Table.recipe_list.some((value) => value.input === tile.data.id)) {
           return this.increaseProgress(tile), this.releaseRecipe(tile);
         } else {
@@ -83,7 +97,7 @@ class Press extends TileEntityBase {
         }
       }
     }
-  };
+  }
   clientLoad(): void {
     const animation = (this["animation"] = new BlockAnimation(
       new Vector3(this.x, this.y, this.z),
@@ -98,12 +112,12 @@ class Press extends TileEntityBase {
       }
     ));
     animation.load();
-  };
+  }
   clientUnload(): void {
     const animation = this["animation"] as BlockAnimation;
     animation && animation.destroy();
-  };
-};
+  }
+}
 
 const PRESS = new MachineBlock("engineer_press", [
   {
@@ -116,3 +130,9 @@ const PRESS = new MachineBlock("engineer_press", [
 PRESS.createWithRotation();
 PRESS.setupModel("press", "press_base");
 PRESS.setupLogic(new Press(125));
+PRESS.setInventoryModel("item/press_full", "animation/press", {
+  translate: [0.5, 0.05, 0.5],
+  scale: [0.7, 0.7, 0.7],
+  invertV: false,
+  noRebuild: false,
+});

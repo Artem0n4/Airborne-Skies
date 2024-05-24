@@ -1,5 +1,6 @@
 const ru_RU = {
     "durability: ": "прочность: ",
+    "message.airborne_skies.table_lock": "Это опасно!",
     "message.airborne_skies.debug.full_information": "Полная информация: ",
     "message.airborne_skies.debug.mode_list": "Список игроков с режимом инженера и их значения: ",
     "message.airborne_skies.debug.engineer_mode": "Булевое значение вашего режима инженера: ",
@@ -23,6 +24,7 @@ const ru_RU = {
 
 const en_US = {
     "message.airborne_skies.debug.full_information": "Full information: ",
+    "message.airborne_skies.table_lock": "It is danger!",
     "message.airborne_skies.debug.mode_list": "Player engineer modes list: ",
     "message.airborne_skies.debug.engineer_mode": "Your engineer mode value: ",
     "armor.airborne_skies.engineer_glasses": "Engineer glasses",

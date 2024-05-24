@@ -65,7 +65,7 @@ class SkyItem {
   public setItemModel(model_name: string, texture: string, import_params?: RenderMesh.ImportParams) {
     const model = ItemModel.getForWithFallback(ItemID[this.id], 0);
     model.setModel(this.model(model_name, import_params), "models/" + texture);
-  }
+  };
   public setInventoryModel(
     model_name: string,
     texture: string,
