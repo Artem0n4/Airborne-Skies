@@ -58,7 +58,7 @@ namespace Engineer {
     private static destroyHammer(item: ItemInstance, player: int) {
       const entity = new PlayerEntity(player);
       const pos = Entity.getPosition(player);
-      MachineBlock.crossParticles({x: pos.x, y: pos.y + 1, z: pos.z});
+      MachineBlock.crossParticles({x: pos.x, y: pos.y + 1, z: pos.z}, player);
       entity.decreaseCarriedItem();
       return;
     };
@@ -78,7 +78,7 @@ namespace Engineer {
           return;
         }
       }
-      MachineBlock.takeParticles(coords);
+      MachineBlock.takeParticles(coords, player);
     }
     static {
       Item.registerUseFunctionForID(

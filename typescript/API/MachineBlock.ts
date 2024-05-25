@@ -5,57 +5,60 @@ class MachineBlock extends SkyBlock {
     this.createWithRotation();
     Block.setDestroyTime(this.id, -1), this.destroyIfCondition();
     MachineBlock.machine_list.push(BlockID[this.id]);
-  };
-  public static takeParticles(coords: Callback.ItemUseCoordinates | Vector) {
+  }
+  public static takeParticles(
+    coords: Callback.ItemUseCoordinates | Vector,
+    player: int
+  ) {
     const particle_list = MathHelper.randomValue(
       EParticleType.REDSTONE,
       EParticleType.CRIT
     );
     for (let i = 0; i < 8; i++) {
       const velocity = Math.random() / i;
-      Particles.addParticle(
-        particle_list,
-        coords.x + Math.random(),
-        coords.y + Math.random(),
-        coords.z + Math.random(),
-        velocity,
-        velocity,
-        velocity
-      );
+      sendParticle(player, {
+        type: particle_list,
+        coords: new Vector3(
+          coords.x + Math.random(),
+          coords.y + Math.random(),
+          coords.z + Math.random()
+        ),
+        velocity: new Vector3(velocity, velocity, velocity),
+      });
     }
   }
   public static crossParticles(
-    coords: Callback.ItemUseCoordinates | Vector
+    coords: Callback.ItemUseCoordinates | Vector,
+    player: int
   ) {
-        Particles.addParticle(
-        ESkiesParticle.CROSS,
+    sendParticle(player, {
+      type: ESkiesParticle.CROSS,
+      coords: new Vector3(
         coords.x + Math.random() / 10,
         coords.y + 0.9,
-        coords.z + Math.random() / 10,
-        0,
-        0.01,
-        0
-      );
+        coords.z + Math.random() / 10
+      ),
+      velocity: new Vector3(0, 0.1, 0),
+    });
   }
   protected destroyIfCondition() {
     Block.registerClickFunction(this.id, (coords, item, block, player) => {
       const entity = new PlayerEntity(player);
-      const carried_item = entity.getCarriedItem()
+      const carried_item = entity.getCarriedItem();
       if (
-        Entity.getSneaking(player) === true &&
-        carried_item.id === 0 || (carried_item.id === block.id && carried_item.count < 64)
+        (Entity.getSneaking(player) === true && carried_item.id === 0) ||
+        (carried_item.id === block.id && carried_item.count < 64)
       ) {
         const region = BlockSource.getDefaultForActor(player);
-        entity.setCarriedItem({ id: block.id, count: 1, data: 0});
+        entity.setCarriedItem({ id: block.id, count: 1, data: 0 });
         region.setBlock(coords.x, coords.y, coords.z, 0, 0);
-        MachineBlock.takeParticles(coords);
-    }
-  });
-
-  };
+        MachineBlock.takeParticles(coords, player);
+      }
+    });
+  }
   public setupLogic(prototype: TileEntityBase) {
-      return TileEntity.registerPrototype(BlockID[this.id], prototype)
-  };
+    return TileEntity.registerPrototype(BlockID[this.id], prototype);
+  }
   protected model(model: string, import_params: RenderMesh.ImportParams) {
     const mesh = new RenderMesh();
     mesh.importFromFile(
@@ -65,17 +68,25 @@ class MachineBlock extends SkyBlock {
     );
     return mesh;
   }
-  public setHandModel(model_name: string, texture: string, import_params?: RenderMesh.ImportParams) {
+  public setHandModel(
+    model_name: string,
+    texture: string,
+    import_params?: RenderMesh.ImportParams
+  ) {
     const model = ItemModel.getForWithFallback(BlockID[this.id], 0);
     model.setHandModel(
       this.model(model_name, import_params),
       "models/" + texture
     );
   }
-  public setItemModel(model_name: string, texture: string, import_params?: RenderMesh.ImportParams) {
+  public setItemModel(
+    model_name: string,
+    texture: string,
+    import_params?: RenderMesh.ImportParams
+  ) {
     const model = ItemModel.getForWithFallback(BlockID[this.id], 0);
     model.setModel(this.model(model_name, import_params), "models/" + texture);
-  };
+  }
   public setInventoryModel(
     model_name: string,
     texture: string,
@@ -86,11 +97,14 @@ class MachineBlock extends SkyBlock {
     mesh.rotate(rotation[0], rotation[1], rotation[2]);
     const model = ItemModel.getForWithFallback(BlockID[this.id], 0);
     model.setUiModel(mesh, "models/" + texture);
-  };
+  }
   static {
     Callback.addCallback("DestroyBlockContinue", (coords, block, player) => {
-      if (MachineBlock.machine_list.includes(block.id) && MathHelper.randomInt(0, 100) < 5)
-        return MachineBlock.crossParticles(coords)
+      if (
+        MachineBlock.machine_list.includes(block.id) &&
+        MathHelper.randomInt(0, 100) < 5
+      )
+        return MachineBlock.crossParticles(coords, player);
     });
   }
 }

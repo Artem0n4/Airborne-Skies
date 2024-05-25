@@ -48,3 +48,21 @@ const BLOCK_TYPE_STONE = Block.createSpecialType({
     rendertype: 0,
     translucency: 0,
 });
+
+interface IParticleSenderDescriptor {
+    type: int, 
+    coords: Vector,
+    velocity: Vector
+};
+
+Network.addClientPacket("airborne_skies.particle", (packetData: IParticleSenderDescriptor) => {
+    Particles.addParticle(
+        packetData.type,
+        packetData.coords.x,
+        packetData.coords.y,
+        packetData.coords.z,
+        packetData.velocity.x,
+        packetData.velocity.y,
+        packetData.velocity.z
+      );
+})

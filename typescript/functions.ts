@@ -60,4 +60,11 @@ function sendTipMessage(
   client.send("airborne_skies.clientTipMessage", {
     message
   });
+};
+
+function sendParticle(player: int, sender: IParticleSenderDescriptor) {
+  const client = Network.getClientForPlayer(player);
+  if(!client) return;
+  client.send("airborne_skies.particle", sender);
 }
+

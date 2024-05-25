@@ -87,11 +87,11 @@ class Table extends TileEntityBase {
       Entity.getSneaking(player) === true ||
       this.data.lock === true
     ) {
-      MachineBlock.takeParticles({
+      MachineBlock.crossParticles({
         x: this.x,
         y: this.y + 0.2,
         z: this.z,
-      });
+      }, player);
       this.lockAction(player);
       return;
     }

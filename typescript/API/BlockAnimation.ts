@@ -1,38 +1,40 @@
 interface IAnimationParams {
-  model: RenderMesh.ImportParams;
-  animation?: {
     scale: int;
     material?: string;
-  };
 }
 
 class BlockAnimation {
   protected animation: Animation.Base;
-  constructor(
-    pos: Vector,
+  public static createRenderMesh(
     model: string,
-    texture: string,
-    params: IAnimationParams = {
-      model: {
-        invertV: false,
-        noRebuild: false,
-      },
-      animation: {
-        scale: 1,
-      },
+    importParams: RenderMesh.ImportParams = {
+      translate: [0.5, 0, 0.5],
+      invertV: false,
+      noRebuild: false,
     }
-  ) {
+  ): RenderMesh {
     const mesh = new RenderMesh();
     mesh.importFromFile(
       __dir__ + "/resources/assets/models/animation/" + model + ".obj",
       "obj",
-      params.model
+      importParams
     );
+    return mesh;
+  }
+  constructor(
+    pos: Vector,
+    mesh: RenderMesh,
+    texture: string,
+    params: IAnimationParams = {
+        scale: 1,
+    }
+  ) {
     const animation = new Animation.Base(pos.x, pos.y, pos.z);
     animation.describe({
       mesh,
       skin: "models/animation/" + texture,
-      scale: params?.animation?.scale ?? 1,
+      scale: params?.scale ?? 1,
+      ...(params?.material && { material: params.material })
     });
     animation.setBlocklightMode();
     this.animation = animation;
