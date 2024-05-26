@@ -84,6 +84,13 @@ class Press extends TileEntityBase {
         }
       }
     }
+  };
+  destroy(): boolean {
+    const tile = TileEntity.getTileEntity(this.x, this.y - 1, this.z);
+    if(this.validateTable(tile) && tile.data.lock === true) {
+      tile.data.lock = false;
+    };
+    return false;
   }
   onTick(): void {
     if (this.data.active === false) return;
