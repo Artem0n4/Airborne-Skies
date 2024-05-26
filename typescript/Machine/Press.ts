@@ -13,8 +13,8 @@ class Press extends TileEntityBase {
   @BlockEngine.Decorators.NetworkEvent(Side.Client)
   protected movePiston(data: Vector): void {
     const animation = this["animation"] as BlockAnimation;
-    if(!animation) return;
-      animation.setPos(data.x, data.y, data.z);
+    if (!animation) return;
+    animation.setPos(data.x, data.y, data.z);
   }
   public onRedstoneUpdate(signal: number): void {
     if (this.data.active === false && signal === Press.REDSTONE_SIGNAL_VALUE) {
@@ -27,7 +27,6 @@ class Press extends TileEntityBase {
     return (
       this.blockSource.getBlockId(this.x, this.y - 1, this.z) ===
         TABLE.getID() && tile
-
     );
   }
 
@@ -38,7 +37,10 @@ class Press extends TileEntityBase {
         "movePiston",
         new Vector3(this.x, this.y + (this.data.progress / 250) * -1, this.z)
       );
-      if(tile.data.lock === true && this.data.progress < Press.PROGRESS_MAX / 4) {
+      if (
+        tile.data.lock === true &&
+        this.data.progress < Press.PROGRESS_MAX / 4
+      ) {
         tile.data.lock = false;
       }
       return;
@@ -46,7 +48,7 @@ class Press extends TileEntityBase {
   }
   protected increaseProgress(tile: TileEntity) {
     if (this.data.progress < Press.PROGRESS_MAX) {
-      if(tile.data.lock === false) {
+      if (tile.data.lock === false) {
         tile.data.lock = true;
       }
       this.data.progress++;
@@ -57,25 +59,23 @@ class Press extends TileEntityBase {
       return;
     }
   }
-  private particles() {
-    for (let i = 0; i <= 6; i++) {
-      sendParticle(Player.getLocal(), {
-        type: EParticleType.FLAME,
-        coords: new Vector3(
-          this.x + 0.5,
-          this.y - 1.9 + Math.random() / i,
-          this.z + 0.5
-        ),
-        velocity: new Vector3(0.003, 0.1, 0.003),
-      });
-    }
+  protected resultParticles() {
+      for (let i = 0; i <= 8; i++) {
+        sendParticle(Player.getLocal(), {
+          type: EParticleType.FLAME,
+          coords: new Vector3(this.x + 0.5, this.y - 0.1, this.z + 0.5),
+          velocity: new Vector3(0.003, 0.1, 0.003),
+        });
+      };
+      Table.resultParticles(new Vector3(this.x + 0.5, this.y - 0.8, this.z + 0.5), Player.getLocal());
+    
   }
   protected releaseRecipe(tile: TileEntity) {
     if (this.data.progress >= Press.PROGRESS_MAX) {
       for (const list of Table.recipe_list) {
         if (tile.data.id === list.input) {
           tile.data.id = list.output;
-          this.particles();
+          this.resultParticles();
           tile.sendPacket("updateVisual", {
             id: list.output,
             rotation: MathHelper.randomInt(1, 360),

@@ -15,6 +15,26 @@ class Table extends TileEntityBase {
     id: 0,
     lock: false,
   };
+  public static validateItem(input_id: int): boolean {
+    for (const list of Table.recipe_list) {
+      if (
+        list.input === input_id ||
+        input_id === 0 ||
+        input_id === Engineer.Mode.METAL_SHEARS.getID()
+      )
+        return true;
+    }
+    return false;
+  };
+  public static resultParticles(coords: Vector, player: int) {
+    for (let i = 0; i <= 8; i++) {
+      sendParticle(player, {
+        type: EParticleType.SMOKE2,
+        coords: coords,
+        velocity: new Vector3(0, 0.003, 0),
+      });
+    }
+  };
   @BlockEngine.Decorators.NetworkEvent(Side.Client)
   protected updateVisual(data: { id: int; rotation?: int }) {
     const animation = this["animation"] as Animation.Item;
@@ -27,18 +47,7 @@ class Table extends TileEntityBase {
         rotation: [Math.PI / 2, 0, MathHelper.radian(data?.rotation || 0)],
       });
     animation.load();
-  }
-  public static validateItem(input_id: int): boolean {
-    for (const list of Table.recipe_list) {
-      if (
-        list.input === input_id ||
-        input_id === 0 ||
-        input_id === Engineer.Mode.METAL_SHEARS.getID()
-      )
-        return true;
-    }
-    return false;
-  }
+  };
   public lockAction(player: int) {
     if (this.data.lock === false) return;
     const client = Network.getClientForPlayer(player);
@@ -47,7 +56,8 @@ class Table extends TileEntityBase {
       Native.Color.RED,
     ]);
     return;
-  }
+  };
+
   private updateId(id: int, rotation = MathHelper.randomInt(0, 360)) {
     this.data.id = id;
     this.sendPacket("updateVisual", { id, rotation });
@@ -57,13 +67,7 @@ class Table extends TileEntityBase {
     for (const list of Table.recipe_list) {
       if (list.output === this.data.id && list.cutted !== 0) {
         this.updateId(list.cutted);
-        for (let i = 0; i <= 8; i++) {
-          sendParticle(player, {
-            type: EParticleType.SMOKE2,
-            coords: new Vector3(this.x, this.y + 0.2, this.z),
-            velocity: new Vector3(0, 0.003, 0),
-          });
-        }
+        Table.resultParticles(new Vector3(this.x + 0.5, this.y + 0.2, this.z + 0.5), player);
         return;
       }
     }
@@ -97,7 +101,7 @@ class Table extends TileEntityBase {
       sendParticle(player, {
         type: ESkiesParticle.CROSS,
         coords: new Vector3(coords.x + 0.5, coords.y + 0.2, coords.z + 0.5),
-        velocity: new Vector3(0, 0.025, 0),
+        velocity: new Vector3(0, 0.005, 0),
       });
       this.lockAction(player);
       return;
@@ -124,9 +128,9 @@ class Table extends TileEntityBase {
     if (this.data.id === 0) return;
     this.sendPacket("updateVisual", { id: 0 });
     this.blockSource.spawnDroppedItem(
-      this.x,
+      this.x + 0.5,
       this.y + 0.5,
-      this.z,
+      this.z + 0.5,
       this.data.id,
       1,
       0
