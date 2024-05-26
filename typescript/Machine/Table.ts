@@ -53,10 +53,17 @@ class Table extends TileEntityBase {
     this.sendPacket("updateVisual", { id, rotation });
     return;
   }
-  protected plateManipulate(item: ItemInstance) {
+  protected plateManipulate(item: ItemInstance, player: int) {
     for (const list of Table.recipe_list) {
       if (list.output === this.data.id && list.cutted !== 0) {
         this.updateId(list.cutted);
+        for (let i = 0; i <= 8; i++) {
+          sendParticle(player, {
+            type: EParticleType.SMOKE2,
+            coords: new Vector3(this.x, this.y + 0.2, this.z),
+            velocity: new Vector3(0, 0.003, 0),
+          });
+        }
         return;
       }
     }
@@ -89,18 +96,14 @@ class Table extends TileEntityBase {
     ) {
       sendParticle(player, {
         type: ESkiesParticle.CROSS,
-        coords: new Vector3(
-          coords.x + 0.5,
-          coords.y + 0.2,
-          coords.z + 0.5
-        ),
-        velocity: new Vector3(0, 0.05, 0),
+        coords: new Vector3(coords.x + 0.5, coords.y + 0.2, coords.z + 0.5),
+        velocity: new Vector3(0, 0.025, 0),
       });
       this.lockAction(player);
       return;
     }
     if (item.id === Engineer.Mode.METAL_SHEARS.getID()) {
-      return this.plateManipulate(item);
+      return this.plateManipulate(item, player);
     } else {
       return this.itemManipulate(item, new PlayerEntity(player));
     }
