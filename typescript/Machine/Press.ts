@@ -1,6 +1,6 @@
 class Press extends TileEntityBase {
   public static REDSTONE_SIGNAL_VALUE = 15;
-  public static PROGRESS_MAX = 80;
+  public static PROGRESS_MAX = 200;
   public static PISTON_MODEL = BlockAnimation.createRenderMesh("press_piston");
   public defaultValues = {
     active: false,
@@ -13,7 +13,8 @@ class Press extends TileEntityBase {
   @BlockEngine.Decorators.NetworkEvent(Side.Client)
   protected movePiston(data: Vector): void {
     const animation = this["animation"] as BlockAnimation;
-    animation.setPos(data.x, data.y, data.z);
+    if(!animation) return;
+      animation.setPos(data.x, data.y, data.z);
   }
   public onRedstoneUpdate(signal: number): void {
     if (this.data.active === false && signal === Press.REDSTONE_SIGNAL_VALUE) {
@@ -26,6 +27,7 @@ class Press extends TileEntityBase {
     return (
       this.blockSource.getBlockId(this.x, this.y - 1, this.z) ===
         TABLE.getID() && tile
+
     );
   }
 
@@ -34,7 +36,7 @@ class Press extends TileEntityBase {
       this.data.progress--;
       this.sendPacket(
         "movePiston",
-        new Vector3(this.x, this.y + (this.data.progress / 100) * -1, this.z)
+        new Vector3(this.x, this.y + (this.data.progress / 250) * -1, this.z)
       );
       if(tile.data.lock === true && this.data.progress < Press.PROGRESS_MAX / 4) {
         tile.data.lock = false;
@@ -50,7 +52,7 @@ class Press extends TileEntityBase {
       this.data.progress++;
       this.sendPacket(
         "movePiston",
-        new Vector3(this.x, this.y - this.data.progress / 100, this.z)
+        new Vector3(this.x, this.y - this.data.progress / 250, this.z)
       );
       return;
     }

@@ -87,11 +87,15 @@ class Table extends TileEntityBase {
       Entity.getSneaking(player) === true ||
       this.data.lock === true
     ) {
-      MachineBlock.crossParticles({
-        x: this.x,
-        y: this.y + 0.2,
-        z: this.z,
-      }, player);
+      sendParticle(player, {
+        type: ESkiesParticle.CROSS,
+        coords: new Vector3(
+          coords.x + 0.5,
+          coords.y + 0.2,
+          coords.z + 0.5
+        ),
+        velocity: new Vector3(0, 0.05, 0),
+      });
       this.lockAction(player);
       return;
     }
