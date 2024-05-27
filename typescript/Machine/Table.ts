@@ -25,7 +25,7 @@ class Table extends TileEntityBase {
         return true;
     }
     return false;
-  };
+  }
   public static resultParticles(coords: Vector, player: int) {
     for (let i = 0; i <= 8; i++) {
       sendParticle(player, {
@@ -34,7 +34,7 @@ class Table extends TileEntityBase {
         velocity: new Vector3(0, 0.003, 0),
       });
     }
-  };
+  }
   @BlockEngine.Decorators.NetworkEvent(Side.Client)
   protected updateVisual(data: { id: int; rotation?: int }) {
     const animation = this["animation"] as Animation.Item;
@@ -47,7 +47,7 @@ class Table extends TileEntityBase {
         rotation: [Math.PI / 2, 0, MathHelper.radian(data?.rotation || 0)],
       });
     animation.load();
-  };
+  }
   public lockAction(player: int) {
     if (this.data.lock === false) return;
     const client = Network.getClientForPlayer(player);
@@ -56,7 +56,7 @@ class Table extends TileEntityBase {
       Native.Color.RED,
     ]);
     return;
-  };
+  }
 
   private updateId(id: int, rotation = MathHelper.randomInt(0, 360)) {
     this.data.id = id;
@@ -67,7 +67,10 @@ class Table extends TileEntityBase {
     for (const list of Table.recipe_list) {
       if (list.output === this.data.id && list.cutted !== 0) {
         this.updateId(list.cutted);
-        Table.resultParticles(new Vector3(this.x + 0.5, this.y + 0.2, this.z + 0.5), player);
+        Table.resultParticles(
+          new Vector3(this.x + 0.5, this.y + 0.2, this.z + 0.5),
+          player
+        );
         return;
       }
     }
@@ -76,9 +79,18 @@ class Table extends TileEntityBase {
     const hand_item = player.getCarriedItem().id;
     const table_item = this.data.id;
     if (hand_item !== 0 && table_item !== 0) {
-      player.decreaseCarriedItem(1);
-      player.addItemToInventory(new ItemStack(table_item, 1, 0));
-      this.updateId(hand_item);
+      if (
+        Table.recipe_list.some(
+          (value) => value.output === table_item && value.output === hand_item
+        )
+      ) {
+        player.addItemToInventory(new ItemStack(table_item, 1, 0));
+        this.updateId(0);
+      } else {
+        player.decreaseCarriedItem(1);
+        player.addItemToInventory(new ItemStack(table_item, 1, 0));
+        this.updateId(hand_item);
+      }
     } else if (hand_item === 0 && table_item !== 0) {
       player.setCarriedItem(new ItemStack(table_item, 1, 0));
       this.updateId(0);

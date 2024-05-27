@@ -104,6 +104,7 @@ class Press extends TileEntityBase {
     }
   }
   clientLoad(): void {
+    this["animation"] && this["animation"].destroy();
     const animation = (this["animation"] = new BlockAnimation(
       new Vector3(this.x, this.y, this.z),
       Press.PISTON_MODEL,

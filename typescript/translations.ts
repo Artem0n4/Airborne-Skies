@@ -4,6 +4,8 @@ const ru_RU = {
     "message.airborne_skies.debug.full_information": "Полная информация: ",
     "message.airborne_skies.debug.mode_list": "Список игроков с режимом инженера и их значения: ",
     "message.airborne_skies.debug.engineer_mode": "Булевое значение вашего режима инженера: ",
+    "message.airborne_skies.debug.table_lock.false": "Стол разблокирован",
+    "message.airborne_skies.debug.table_lock.true": "Стол заблокирован",
     "armor.airborne_skies.engineer_glasses": "Очки инженера",
     "message.airborne_skies.engineer_mode_false": `Кажется, у меня не получится. Мне нужны специальные очки`,
     "message.airborne_skies.engineer_glasses": "Увеличивают ваше мастерство!",
@@ -14,6 +16,7 @@ const ru_RU = {
     "item.airborne_skies.metal_shears": "Ножницы по металлу",
     "block.airborne_skies.steam_frame": "Корпус",
     "block.airborne_skies.engineer_table": "Инженерный стол",
+    "block.airborne_skies.engineer_press": "Механический пресс",
     "type: ": "тип: ",
     "brass": "латунь",
     "zinc": "цинк",
@@ -28,6 +31,8 @@ const en_US = {
     "message.airborne_skies.debug.mode_list": "Player engineer modes list: ",
     "message.airborne_skies.debug.engineer_mode": "Your engineer mode value: ",
     "armor.airborne_skies.engineer_glasses": "Engineer glasses",
+    "message.airborne_skies.debug.table_lock.false": "Table is unlocked",
+    "message.airborne_skies.debug.table_lock.true": "Table is locked",
     "message.airborne_skies.engineer_mode_false": "Switch on engineer mode!",
     "message.airborne_skies.engineer_glasses": "Increases your mastery!",
     "message.airborne_skies.hammer": "Can to create!",
@@ -35,6 +40,8 @@ const en_US = {
     "item.airborne_skies.engineer_hammer": "Engineer Hammer",
     "item.airborne_skies.metal_shears": "Metal shears",
     "item.airborne_skies.debug_engineer_tool": "Item for debugging",
+    "block.airborne_skies.engineer_press": "Mechanic press",
+    "block.airborne_skies.engineer_table": "Engineer table",
     "block.airborne_skies.steam_frame": "Frame"
 }
 
